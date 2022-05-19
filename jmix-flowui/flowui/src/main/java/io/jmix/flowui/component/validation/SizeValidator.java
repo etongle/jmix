@@ -50,7 +50,7 @@ import java.util.Map;
  * @param <T> Collection or String
  */
 @SameAsUi
-@Component("ui_SizeValidator")
+@Component("flowui_SizeValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SizeValidator<T> extends AbstractValidator<T> implements InitializingBean {
 
