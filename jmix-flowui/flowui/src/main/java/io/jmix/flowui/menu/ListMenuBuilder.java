@@ -25,11 +25,14 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.auth.AccessAnnotationChecker;
 import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.accesscontext.FlowUiMenuContext;
+import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.ScreenInfo;
 import io.jmix.flowui.screen.ScreenRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,18 +72,21 @@ public class ListMenuBuilder {
     protected UiComponents uiComponents;
     protected MessageTools messageTools;
     protected AccessManager accessManager;
+    protected AccessAnnotationChecker accessAnnotationChecker;
 
     @Autowired
     public ListMenuBuilder(MenuConfig menuConfig,
                            ScreenRegistry screenRegistry,
                            UiComponents uiComponents,
                            MessageTools messageTools,
-                           AccessManager accessManager) {
+                           AccessManager accessManager,
+                           AccessAnnotationChecker accessAnnotationChecker) {
         this.menuConfig = menuConfig;
         this.screenRegistry = screenRegistry;
         this.uiComponents = uiComponents;
         this.messageTools = messageTools;
         this.accessManager = accessManager;
+        this.accessAnnotationChecker = accessAnnotationChecker;
     }
 
     public Component build() {
@@ -179,12 +185,11 @@ public class ListMenuBuilder {
             return null;
         }
 
-        ScreenInfo screenInfo = screenRegistry.getScreenInfo(menuItem.getScreen());
-
         RouterLink routerLink = new RouterLink();
         routerLink.addClassNames(JMIX_MENU_ITEM_LINK_STYLE_NAME, FLEX_STYLE_NAME);
         routerLink.addClassNames(getClassNames(menuItem));
-        routerLink.setRoute(screenInfo.getControllerClass());
+        routerLink.setRoute(getControllerClass(menuItem));
+        routerLink.setHighlightCondition(HighlightConditions.sameLocation());
 
         if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
             Icon icon = new Icon(VaadinIcon.valueOf(menuItem.getIcon()));
@@ -201,6 +206,10 @@ public class ListMenuBuilder {
         return routerLink;
     }
 
+    protected Class<? extends Screen<?>> getControllerClass(MenuItem menuItem) {
+        ScreenInfo screenInfo = screenRegistry.getScreenInfo(menuItem.getScreen());
+        return screenInfo.getControllerClass();
+    }
 
 /*    protected void removeExtraSeparators(UnorderedList menuBar) {
         List<SideMenu.MenuItem> menuItems = menuBar.getMenuItems();
@@ -312,11 +321,14 @@ public class ListMenuBuilder {
         }
     }*/
 
-    protected boolean isPermitted(MenuItem item) {
-        if (Strings.isNullOrEmpty(item.getId())) {
+    protected boolean isPermitted(MenuItem menuItem) {
+        // check Vaadin access first
+        Class<? extends Screen<?>> controllerClass = getControllerClass(menuItem);
+        if (accessAnnotationChecker.hasAccess(controllerClass)) {
             return true;
         }
-        FlowUiMenuContext menuItemContext = new FlowUiMenuContext(item);
+
+        FlowUiMenuContext menuItemContext = new FlowUiMenuContext(menuItem);
         accessManager.applyRegisteredConstraints(menuItemContext);
         return menuItemContext.isPermitted();
     }

@@ -43,7 +43,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * GenericUI class holding information about the main menu structure.
  */
-@Component("ui_MenuConfig")
+@Component("flowui_MenuConfig")
 public class MenuConfig {
 
     private final Logger log = LoggerFactory.getLogger(MenuConfig.class);
