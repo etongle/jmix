@@ -41,6 +41,26 @@ import java.util.List;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ListMenuBuilder {
 
+    /* Lumo styles */
+    protected static final String TEXT_SMALL_STYLE_NAME = "text-s";
+    protected static final String LIST_NONE_STYLE_NAME = "list-none";
+    protected static final String MARGIN_NONE_STYLE_NAME = "m-0";
+    protected static final String PADDING_NONE_STYLE_NAME = "p-0";
+    protected static final String FLEX_STYLE_NAME = "flex";
+    protected static final String FONT_MEDIUM_STYLE_NAME = "font-medium";
+
+    protected static final String JMIX_LIST_MENU_STYLE_NAME = "jmix-list-menu";
+
+    protected static final String JMIX_MENUBAR_ITEM_STYLE_NAME = "jmix-menubar-item";
+    protected static final String JMIX_MENUBAR_SUMMARY_ICON_CONTAINER_STYLE_NAME = "jmix-menubar-summary-icon-container";
+    protected static final String MENUBAR_SUMMARY_STYLE_NAME = "menubar-summary";
+    protected static final String MENUBAR_ICON_STYLE_NAME = "menubar-icon";
+    protected static final String MENUBAR_LIST_STYLE_NAME = "menubar-list";
+
+    protected static final String JMIX_MENU_ITEM_LINK_STYLE_NAME = "jmix-menu-item-link";
+    protected static final String LINK_ICON_STYLE_NAME = "link-icon";
+    protected static final String LINK_TEXT_STYLE_NAME = "link-text";
+
     protected MenuConfig menuConfig;
     protected ScreenRegistry screenRegistry;
     protected UiComponents uiComponents;
@@ -63,8 +83,7 @@ public class ListMenuBuilder {
 
     protected UnorderedList build(List<MenuItem> rootItems) {
         UnorderedList menuList = uiComponents.create(UnorderedList.class);
-        // todo rp
-        menuList.addClassNames("jmix-list-menu", "list-none");
+        menuList.addClassNames(JMIX_LIST_MENU_STYLE_NAME, LIST_NONE_STYLE_NAME);
 
         for (MenuItem menuItem : rootItems) {
             Component component = createMenu(menuItem);
@@ -78,24 +97,24 @@ public class ListMenuBuilder {
 
     protected Details createMenuBarComponent(MenuItem menuItem) {
         Details menuItemComponent = new Details();
-        menuItemComponent.addClassName("jmix-menubar-item");
+        menuItemComponent.addClassName(JMIX_MENUBAR_ITEM_STYLE_NAME);
         menuItemComponent.addClassNames(getClassNames(menuItem));
         menuItemComponent.setOpened(menuItem.isOpened());
 
         Span summary = new Span();
         summary.setText(menuConfig.getItemTitle(menuItem));
-        summary.addClassNames("menubar-summary", "text-s");
+        summary.addClassNames(MENUBAR_SUMMARY_STYLE_NAME, TEXT_SMALL_STYLE_NAME);
 
         Icon icon = null;
         if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
             icon = new Icon(VaadinIcon.valueOf(menuItem.getIcon()));
-            icon.addClassName("menubar-icon");
+            icon.addClassName(MENUBAR_ICON_STYLE_NAME);
         }
 
         if (icon != null) {
             Div div = new Div();
             div.add(icon, summary);
-            div.addClassName("jmix-menubar-summary-icon-container");
+            div.addClassName(JMIX_MENUBAR_SUMMARY_ICON_CONTAINER_STYLE_NAME);
             div.setTitle(getDescription(menuItem));
             menuItemComponent.setSummary(div);
         } else {
@@ -104,8 +123,8 @@ public class ListMenuBuilder {
         }
 
         UnorderedList menuList = new UnorderedList();
-        // todo rp classes
-        menuList.addClassNames("menubar-list", "list-none", "m-0", "p-0");
+        menuList.addClassNames(MENUBAR_LIST_STYLE_NAME, LIST_NONE_STYLE_NAME, MARGIN_NONE_STYLE_NAME,
+                PADDING_NONE_STYLE_NAME);
 
         menuItemComponent.setContent(menuList);
 
@@ -147,19 +166,18 @@ public class ListMenuBuilder {
         ScreenInfo screenInfo = screenRegistry.getScreenInfo(menuItem.getScreen());
 
         RouterLink routerLink = new RouterLink();
-        // todo rp
-        routerLink.addClassNames("jmix-menu-item-link", "flex", "relative", "text-secondary");
+        routerLink.addClassNames(JMIX_MENU_ITEM_LINK_STYLE_NAME, FLEX_STYLE_NAME);
         routerLink.addClassNames(getClassNames(menuItem));
         routerLink.setRoute(screenInfo.getControllerClass());
 
         if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
             Icon icon = new Icon(VaadinIcon.valueOf(menuItem.getIcon()));
-            icon.addClassName("link-icon");
+            icon.addClassName(LINK_ICON_STYLE_NAME);
             routerLink.add(icon);
         }
 
         Span text = new Span(menuConfig.getItemTitle(menuItem));
-        text.addClassNames("link-text", "font-medium", "text-s");
+        text.addClassNames(LINK_TEXT_STYLE_NAME, FONT_MEDIUM_STYLE_NAME, TEXT_SMALL_STYLE_NAME);
         text.setTitle(getDescription(menuItem));
 
         routerLink.add(text);
@@ -196,33 +214,6 @@ public class ListMenuBuilder {
         }
     }*/
 
-    protected void createMenuBarItem(UnorderedList menuList, MenuItem item) {
-//        if (isPermitted(item)) {
-
-        Component menuItem = createMenuListItem(item);
-
-//            assignShortcut(webWindow, menuItem, item);
-
-/*            if (!isMenuItemEmpty(menuItem)) {
-                menuList.add(menuItem);
-            }*/
-
-        menuList.add(menuItem);
-//        }
-    }
-
-    protected Component createMenuListItem(MenuItem item) {
-        if (item.isMenu()) {
-            Span menuItem = new Span();
-            menuItem.setText(item.getTitle());
-            return menuItem;
-        } else {
-            ScreenInfo screenInfo = screenRegistry.getScreenInfo(item.getScreen());
-            RouterLink link = new RouterLink(item.getTitle(), screenInfo.getControllerClass());
-            return link;
-        }
-    }
-
     /*protected void createSubMenu(UnorderedList menu, MenuItem vItem, MenuItem parentItem) {
         if (isPermitted(parentItem)) {
             for (MenuItem child : parentItem.getChildren()) {
@@ -256,11 +247,6 @@ public class ListMenuBuilder {
                 }
             }
         }
-    }*/
-
-    // todo rp expanded
-    /*protected void assignExpanded(SideMenu.MenuItem menuItem, MenuItem item) {
-        menuItem.setExpanded(item.isExpanded());
     }*/
 
     /*@Nullable

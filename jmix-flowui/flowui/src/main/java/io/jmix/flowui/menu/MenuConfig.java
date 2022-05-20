@@ -61,9 +61,6 @@ public class MenuConfig {
     @Autowired
     protected MessageTools messageTools;
 
-//    @Autowired
-//    protected ThemeConstantsManager themeConstantsManager;
-
     @Autowired
     protected Dom4jTools dom4JTools;
 
@@ -75,9 +72,6 @@ public class MenuConfig {
 
     @Autowired
     protected JmixModules modules;
-
-//    @Autowired
-//    protected Icons icons;
 
     protected volatile boolean initialized;
 

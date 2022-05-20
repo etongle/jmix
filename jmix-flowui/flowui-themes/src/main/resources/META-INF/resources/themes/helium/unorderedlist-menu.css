@@ -15,6 +15,7 @@
  */
 
 .jmix-list-menu {
+    color: var(--lumo-secondary-text-color);
     margin: 0 var(--lumo-space-s);
     padding: 0;
 }
@@ -52,6 +53,7 @@
     gap: var(--lumo-space-s);
     padding: var(--lumo-space-s);
     text-decoration: none;
+    color: inherit;
 }
 
 .jmix-list-menu .jmix-menu-item-link .link-text {
