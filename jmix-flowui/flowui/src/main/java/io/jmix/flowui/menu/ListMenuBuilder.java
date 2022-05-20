@@ -26,8 +26,10 @@ import com.vaadin.flow.component.html.UnorderedList;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.RouterLink;
+import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.accesscontext.FlowUiMenuContext;
 import io.jmix.flowui.screen.ScreenInfo;
 import io.jmix.flowui.screen.ScreenRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,7 @@ import org.springframework.context.annotation.Scope;
 import javax.annotation.Nullable;
 import java.util.List;
 
+// todo rp name
 @org.springframework.stereotype.Component("flowui_ListMenuBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ListMenuBuilder {
@@ -65,23 +68,26 @@ public class ListMenuBuilder {
     protected ScreenRegistry screenRegistry;
     protected UiComponents uiComponents;
     protected MessageTools messageTools;
+    protected AccessManager accessManager;
 
     @Autowired
     public ListMenuBuilder(MenuConfig menuConfig,
                            ScreenRegistry screenRegistry,
                            UiComponents uiComponents,
-                           MessageTools messageTools) {
+                           MessageTools messageTools,
+                           AccessManager accessManager) {
         this.menuConfig = menuConfig;
         this.screenRegistry = screenRegistry;
         this.uiComponents = uiComponents;
         this.messageTools = messageTools;
+        this.accessManager = accessManager;
     }
 
-    public UnorderedList build() {
+    public Component build() {
         return build(menuConfig.getRootItems());
     }
 
-    protected UnorderedList build(List<MenuItem> rootItems) {
+    protected Component build(List<MenuItem> rootItems) {
         UnorderedList menuList = uiComponents.create(UnorderedList.class);
         menuList.addClassNames(JMIX_LIST_MENU_STYLE_NAME, LIST_NONE_STYLE_NAME);
 
@@ -134,15 +140,20 @@ public class ListMenuBuilder {
     @Nullable
     protected Component createMenu(MenuItem menuItem) {
         if (menuItem.isMenu()) {
+            if (menuItem.getChildren().isEmpty()) {
+                return null;
+            }
             Details menuBar = createMenuBarComponent(menuItem);
-            if (!menuItem.getChildren().isEmpty()) {
-                UnorderedList content = getMenuBarContent(menuBar);
-                for (MenuItem childItem : menuItem.getChildren()) {
-                    Component component = createMenu(childItem);
-                    if (component != null) {
-                        content.add(new ListItem(component));
-                    }
+            UnorderedList content = getMenuBarContent(menuBar);
+            for (MenuItem childItem : menuItem.getChildren()) {
+                Component component = createMenu(childItem);
+                if (component != null) {
+                    content.add(new ListItem(component));
                 }
+            }
+            // do not return empty menu bar
+            if (!content.getChildren().findAny().isPresent()) {
+                return null;
             }
             return menuBar;
         } else if (!Strings.isNullOrEmpty(menuItem.getScreen())) {
@@ -162,7 +173,12 @@ public class ListMenuBuilder {
                                 + UnorderedList.class.getName()));
     }
 
+    @Nullable
     protected RouterLink createMenuItemComponent(MenuItem menuItem) {
+        if (!isPermitted(menuItem)) {
+            return null;
+        }
+
         ScreenInfo screenInfo = screenRegistry.getScreenInfo(menuItem.getScreen());
 
         RouterLink routerLink = new RouterLink();
@@ -296,15 +312,14 @@ public class ListMenuBuilder {
         }
     }*/
 
-    // todo rp security
-    /*protected boolean isPermitted(MenuItem item) {
-        if (Strings.isNullOrEmpty(item.getId()) || item.isSeparator()) {
+    protected boolean isPermitted(MenuItem item) {
+        if (Strings.isNullOrEmpty(item.getId())) {
             return true;
         }
-        UiMenuContext menuItemContext = new UiMenuContext(item);
+        FlowUiMenuContext menuItemContext = new FlowUiMenuContext(item);
         accessManager.applyRegisteredConstraints(menuItemContext);
         return menuItemContext.isPermitted();
-    }*/
+    }
 
     /*protected static class SideMenuShortcutListener extends ShortcutListener {
         protected SideMenu.MenuItem menuItem;
