@@ -27,14 +27,14 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
-import com.vaadin.flow.server.auth.AccessAnnotationChecker;
-import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.accesscontext.FlowUiMenuContext;
 import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.ScreenInfo;
 import io.jmix.flowui.screen.ScreenRegistry;
+import io.jmix.flowui.sys.FlowuiAccessChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -46,6 +46,7 @@ import java.util.List;
 @org.springframework.stereotype.Component("flowui_ListMenuBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ListMenuBuilder {
+    private static final Logger log = LoggerFactory.getLogger(ListMenuBuilder.class);
 
     /* Lumo styles */
     protected static final String TEXT_SMALL_STYLE_NAME = "text-s";
@@ -71,22 +72,19 @@ public class ListMenuBuilder {
     protected ScreenRegistry screenRegistry;
     protected UiComponents uiComponents;
     protected MessageTools messageTools;
-    protected AccessManager accessManager;
-    protected AccessAnnotationChecker accessAnnotationChecker;
+    protected FlowuiAccessChecker flowuiAccessChecker;
 
     @Autowired
     public ListMenuBuilder(MenuConfig menuConfig,
                            ScreenRegistry screenRegistry,
                            UiComponents uiComponents,
                            MessageTools messageTools,
-                           AccessManager accessManager,
-                           AccessAnnotationChecker accessAnnotationChecker) {
+                           FlowuiAccessChecker flowuiAccessChecker) {
         this.menuConfig = menuConfig;
         this.screenRegistry = screenRegistry;
         this.uiComponents = uiComponents;
         this.messageTools = messageTools;
-        this.accessManager = accessManager;
-        this.accessAnnotationChecker = accessAnnotationChecker;
+        this.flowuiAccessChecker = flowuiAccessChecker;
     }
 
     public Component build() {
@@ -147,6 +145,7 @@ public class ListMenuBuilder {
     protected Component createMenu(MenuItem menuItem) {
         if (menuItem.isMenu()) {
             if (menuItem.getChildren().isEmpty()) {
+                log.debug("Menu item '{}' is skipped as it does not have children", menuItem.getId());
                 return null;
             }
             Details menuBar = createMenuBarComponent(menuItem);
@@ -159,6 +158,8 @@ public class ListMenuBuilder {
             }
             // do not return empty menu bar
             if (!content.getChildren().findAny().isPresent()) {
+                log.debug("Menu item '{}' is skipped as it does not have children or they are not permitted by " +
+                        "access constraint", menuItem.getId());
                 return null;
             }
             return menuBar;
@@ -182,6 +183,7 @@ public class ListMenuBuilder {
     @Nullable
     protected RouterLink createMenuItemComponent(MenuItem menuItem) {
         if (!isPermitted(menuItem)) {
+            log.debug("Menu item '{}' is not permitted by access constraint", menuItem.getId());
             return null;
         }
 
@@ -211,85 +213,6 @@ public class ListMenuBuilder {
         return screenInfo.getControllerClass();
     }
 
-/*    protected void removeExtraSeparators(UnorderedList menuBar) {
-        List<SideMenu.MenuItem> menuItems = menuBar.getMenuItems();
-        for (SideMenu.MenuItem item : menuItems.toArray(new SideMenu.MenuItem[0])) {
-            removeExtraSeparators(item);
-            if (isMenuItemEmpty(item)) {
-                menuBar.removeMenuItem(item);
-            }
-        }
-    }*/
-
-    /*protected void removeExtraSeparators(SideMenu.MenuItem item) {
-        if (!item.hasChildren())
-            return;
-
-        // SideMenu does not support separator elements
-        if (item.hasChildren()) {
-            SideMenu.MenuItem[] menuItems =
-                    item.getChildren().toArray(new SideMenu.MenuItem[0]);
-
-            for (SideMenu.MenuItem child : menuItems) {
-                removeExtraSeparators(child);
-                if (isMenuItemEmpty(child)) {
-                    item.removeChildItem(child);
-                }
-            }
-        }
-    }*/
-
-    /*protected void createSubMenu(UnorderedList menu, MenuItem vItem, MenuItem parentItem) {
-        if (isPermitted(parentItem)) {
-            for (MenuItem child : parentItem.getChildren()) {
-                *//*if (child.isSeparator()) {
-                    continue;
-                }*//*
-
-                if (isPermitted(child)) {
-                    SideMenu.MenuItem menuItem = menu.createMenuItem(child.getId(),
-                            menuConfig.getItemCaption(child));
-
-                    assignDescription(menuItem, child);
-                    assignIcon(menuItem, child);
-                    assignStyleName(menuItem, child);
-
-                    if (child.getChildren().isEmpty()) {
-                        menuItem.setCommand(createMenuBarCommand(child));
-
-                        assignShortcut(webWindow, menuItem, child);
-
-                        vItem.addChildItem(menuItem);
-                    } else {
-                        createSubMenu(webWindow, menu, menuItem, child);
-
-                        assignExpanded(menuItem, child);
-
-                        if (!isMenuItemEmpty(menuItem)) {
-                            vItem.addChildItem(menuItem);
-                        }
-                    }
-                }
-            }
-        }
-    }*/
-
-    /*@Nullable
-    protected Consumer<SideMenu.MenuItem> createMenuBarCommand(final MenuItem item) {
-        if (!item.getChildren().isEmpty() || item.isMenu())     //check item is menu
-            return null;
-
-        return createMenuCommandExecutor(item);
-    }
-
-    protected Consumer<SideMenu.MenuItem> createMenuCommandExecutor(MenuItem item) {
-        return new MenuCommandExecutor(menuItemCommands, item);
-    }*/
-
-/*    protected boolean isMenuItemEmpty(SideMenu.MenuItem menuItem) {
-        return !menuItem.hasChildren() && menuItem.getCommand() == null;
-    }*/
-
     protected String getDescription(MenuItem menuItem) {
         String description = menuItem.getDescription();
         if (!Strings.isNullOrEmpty(description)) {
@@ -306,75 +229,7 @@ public class ListMenuBuilder {
         return menuItem.getClassName().split(",");
     }
 
-    // todo rp shortcut
-    /*protected void assignShortcut(Window webWindow, SideMenu.MenuItem menuItem, MenuItem item) {
-        KeyCombination itemShortcut = item.getShortcut();
-        if (itemShortcut != null) {
-            ShortcutListener shortcut = new SideMenuShortcutListener(menuItem, item);
-
-            AbstractComponent windowImpl = webWindow.unwrap(AbstractComponent.class);
-            windowImpl.addShortcutListener(shortcut);
-
-            if (Strings.isNullOrEmpty(menuItem.getBadgeText())) {
-                menuItem.setDescription(itemShortcut.format());
-            }
-        }
-    }*/
-
     protected boolean isPermitted(MenuItem menuItem) {
-        // check Vaadin access first
-        Class<? extends Screen<?>> controllerClass = getControllerClass(menuItem);
-        if (accessAnnotationChecker.hasAccess(controllerClass)) {
-            return true;
-        }
-
-        FlowUiMenuContext menuItemContext = new FlowUiMenuContext(menuItem);
-        accessManager.applyRegisteredConstraints(menuItemContext);
-        return menuItemContext.isPermitted();
+        return flowuiAccessChecker.isMenuPermitted(menuItem);
     }
-
-    /*protected static class SideMenuShortcutListener extends ShortcutListener {
-        protected SideMenu.MenuItem menuItem;
-
-        public SideMenuShortcutListener(SideMenu.MenuItem menuItem, MenuItem item) {
-            super("shortcut_" + item.getId(),
-                    item.getShortcut().getKey().getCode(),
-                    getShortcutModifiers(item.getShortcut().getModifiers()));
-            this.menuItem = menuItem;
-        }
-
-        @Override
-        public void handleAction(Object sender, Object target) {
-            com.vaadin.ui.Component menuImpl = menuItem.getMenu().unwrap(com.vaadin.ui.Component.class);
-            AppUI ui = (AppUI) menuImpl.getUI();
-            if (ui.isAccessibleForUser(menuImpl)) {
-                Consumer<SideMenu.MenuItem> command = menuItem.getCommand();
-                if (command != null) {
-                    command.accept(menuItem);
-                }
-            } else {
-                LoggerFactory.getLogger(SideMenuShortcutListener.class)
-                        .debug("Ignoring shortcut action because menu is inaccessible for user");
-            }
-        }
-    }
-
-    public static class MenuCommandExecutor implements Consumer<SideMenu.MenuItem> {
-        private final MenuItem item;
-        private final MenuItemCommands menuItemCommands;
-
-        public MenuCommandExecutor(MenuItemCommands menuItemCommands, MenuItem item) {
-            this.item = item;
-            this.menuItemCommands = menuItemCommands;
-        }
-
-        @Override
-        public void accept(SideMenu.MenuItem menuItem) {
-            SideMenu menu = menuItem.getMenu();
-            FrameOwner frameOwner = menu.getFrame().getFrameOwner();
-
-            MenuItemCommand command = menuItemCommands.create(frameOwner, item);
-            command.run();
-        }
-    }*/
 }

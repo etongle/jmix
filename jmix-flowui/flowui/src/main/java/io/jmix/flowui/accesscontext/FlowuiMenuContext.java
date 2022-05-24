@@ -21,11 +21,11 @@ import io.jmix.flowui.menu.MenuItem;
 
 import javax.annotation.Nullable;
 
-public class FlowUiMenuContext implements AccessContext {
+public class FlowuiMenuContext implements AccessContext {
     protected final MenuItem menuItem;
     protected boolean permitted = true;
 
-    public FlowUiMenuContext(MenuItem menuItem) {
+    public FlowuiMenuContext(MenuItem menuItem) {
         this.menuItem = menuItem;
     }
 

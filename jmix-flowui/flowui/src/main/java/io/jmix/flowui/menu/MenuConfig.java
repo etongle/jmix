@@ -20,7 +20,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Resources;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
-import io.jmix.flowui.FlowUiProperties;
+import io.jmix.flowui.FlowuiProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
@@ -68,7 +68,7 @@ public class MenuConfig {
     protected Environment environment;
 
     @Autowired
-    protected FlowUiProperties flowUiProperties;
+    protected FlowuiProperties flowuiProperties;
 
     @Autowired
     protected JmixModules modules;
@@ -111,7 +111,7 @@ public class MenuConfig {
     protected void init() {
         rootItems.clear();
 
-        List<String> locations = flowUiProperties.isCompositeMenu() ?
+        List<String> locations = flowuiProperties.isCompositeMenu() ?
                 modules.getPropertyValues(MENU_CONFIG_XML_PROP) :
                 Collections.singletonList(environment.getProperty(MENU_CONFIG_XML_PROP));
 
