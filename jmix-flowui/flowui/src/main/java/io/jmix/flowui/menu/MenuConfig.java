@@ -203,6 +203,7 @@ public class MenuConfig {
                 if (menuItem == null) {
                     continue;
                 }
+                // todo rp menu
             } /*else if ("separator".equals(element.getName())) {
                 String id = element.attributeValue("id");
                 if (StringUtils.isBlank(id))
@@ -234,7 +235,7 @@ public class MenuConfig {
 
         String screen = element.attributeValue("screen");
         idFromActions = StringUtils.isNotEmpty(screen) ? screen : null;
-
+        // todo rp menu
         /*String runnableClass = element.attributeValue("class");
         checkDuplicateAction(idFromActions, runnableClass);
         idFromActions = StringUtils.isNotEmpty(runnableClass) ? runnableClass : idFromActions;*/
@@ -267,6 +268,7 @@ public class MenuConfig {
         MenuItem menuItem = new MenuItem(currentParentItem, id);
 
         menuItem.setScreen(screen);
+        // todo rp menu
 //        menuItem.setRunnableClass(runnableClass);
 //        menuItem.setBean(bean);
 //        menuItem.setBeanMethod(beanMethod);
@@ -356,6 +358,7 @@ public class MenuConfig {
         return null;
     }
 
+    // todo rp menu
     /*protected void loadShortcut(MenuItem menuItem, Element element) {
         String shortcut = element.attributeValue("shortcut");
         if (shortcut == null || shortcut.isEmpty()) {

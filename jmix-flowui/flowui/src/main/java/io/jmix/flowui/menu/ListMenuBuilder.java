@@ -42,7 +42,6 @@ import org.springframework.context.annotation.Scope;
 import javax.annotation.Nullable;
 import java.util.List;
 
-// todo rp name
 @org.springframework.stereotype.Component("flowui_ListMenuBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ListMenuBuilder {

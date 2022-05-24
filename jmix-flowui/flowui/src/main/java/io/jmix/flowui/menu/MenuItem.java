@@ -31,6 +31,7 @@ public class MenuItem {
 
     private String id;
     private String screen;
+//    todo rp menu
 //    private String runnableClass;
 //    private String bean;
 //    private String beanMethod;
@@ -134,12 +135,10 @@ public class MenuItem {
         this.className = className;
     }
 
-    // todo rp
 //    public KeyCombination getShortcut() {
 //        return shortcut;
 //    }
 
-    // todo rp
 //    public void setShortcut(@Nullable KeyCombination shortcut) {
 //        this.shortcut = shortcut;
 //    }
