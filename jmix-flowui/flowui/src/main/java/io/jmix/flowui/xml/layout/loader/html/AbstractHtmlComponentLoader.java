@@ -23,7 +23,7 @@ public abstract class AbstractHtmlComponentLoader<T extends HtmlComponent> exten
 
     @Override
     public void loadComponent() {
-        loadResourceString(element.attributeValue("title"), context.getMessageGroup(), resultComponent::setTitle);
+        loadResourceString(element, "title", context.getMessageGroup(), resultComponent::setTitle);
         componentLoader().loadClassName(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
     }

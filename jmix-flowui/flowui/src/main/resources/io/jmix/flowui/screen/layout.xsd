@@ -1495,6 +1495,9 @@
     <xs:complexType name="baseHtmlDescription">
         <xs:complexContent>
             <xs:extension base="baseComponent">
+                <xs:group ref="singleLayoutOrComponent"/>
+                <xs:attribute name="themeName" type="badgeThemeName"/>
+
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasText"/>
                 <xs:attributeGroup ref="hasTitle"/>
@@ -1561,6 +1564,7 @@
                     <xs:group ref="htmlLists"/>
                 </xs:sequence>
 
+                <xs:attribute name="themeName" type="badgeThemeName"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasText"/>
             </xs:extension>
@@ -1571,17 +1575,6 @@
         <xs:complexContent>
             <xs:extension base="unorderedListHtmlContainer">
                 <xs:attribute name="numberingType" type="numberingType"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="descriptionListHtmlContainer">
-        <xs:complexContent>
-            <xs:extension base="baseHtmlDescription">
-                <xs:sequence minOccurs="0">
-                    <xs:element name="term" type="baseHtmlDescription"/>
-                    <xs:element name="description" type="baseHtmlDescription"/>
-                </xs:sequence>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -1664,7 +1657,7 @@
     <!-- GridColumn-->
     <xs:complexType name="dataGridColumnComponent">
         <xs:complexContent>
-            <xs:extension base="baseComponent">
+
                 <!--        <xs:sequence>-->
                 <!--            <xs:element name="aggregation" minOccurs="0">-->
                 <!--                <xs:complexType>-->
@@ -1680,6 +1673,8 @@
                 <!--            <xs:group ref="renderers" minOccurs="0"/>-->
                 <!--        </xs:sequence>-->
 
+                <xs:attribute name="key" type="xs:string"/>
+                <xs:attribute name="visible" type="xs:boolean"/>
                 <xs:attribute name="width" type="xs:string"/>
                 <xs:attribute name="header" type="xs:string"/>
                 <xs:attribute name="footer" type="xs:string"/>
@@ -1690,7 +1685,6 @@
                 <xs:attribute name="resizable" type="xs:boolean"/>
                 <xs:attribute name="autoWidth" type="xs:boolean"/>
                 <xs:attribute name="textAlign" type="gridColumnTextAlignEnum"/>
-            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
@@ -2102,7 +2096,6 @@
                                 <xs:extension base="baseComponent">
                                     <xs:group ref="standardComponent"/>
                                     <xs:attribute name="colspan" type="xs:integer"/>
-                                    <xs:attribute name="property" type="xs:string"/>
                                     <xs:attributeGroup ref="hasEnabled"/>
                                 </xs:extension>
                             </xs:complexContent>
@@ -2228,11 +2221,11 @@
                 <xs:element name="htmlObject" type="htmlObjectComponent"/>
                 <xs:element name="descriptionList" type="baseHtmlDescription"/>
                 <xs:element name="term" type="baseHtmlDescription"/>
-                <xs:element name="descriptionList" type="descriptionListHtmlContainer"/>
+                <xs:element name="description" type="baseHtmlDescription"/>
 
                 <!-- Layout -->
-                <xs:element name="vbox" type="baseLayout"/>
-                <xs:element name="hbox" type="baseLayout"/>
+                <xs:element name="vbox" type="componentLayout"/>
+                <xs:element name="hbox" type="componentLayout"/>
                 <xs:element name="form" type="formLayout"/>
                 <!--                <xs:element name="flowBox" type="flowBoxLayout"/>-->
                 <!--                <xs:element name="cssLayout" type="cssLayout"/>-->
@@ -2366,6 +2359,14 @@
         <xs:complexContent>
             <xs:extension base="baseLayout">
                 <!-- TODO: kremnevda, will be filled 13.04.2022 -->
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="componentLayout">
+        <xs:complexContent>
+            <xs:extension base="baseLayout">
+                <xs:attributeGroup ref="hasId"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

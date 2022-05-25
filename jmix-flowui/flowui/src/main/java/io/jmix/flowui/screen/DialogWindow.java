@@ -24,6 +24,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.screen.Screen.AfterShowEvent;
 import io.jmix.flowui.screen.Screen.BeforeShowEvent;
+import io.jmix.flowui.sys.ScreenSupport;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -34,7 +35,7 @@ import java.util.EventObject;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class DialogWindow<S extends Screen> implements HasSize, HasTheme,
+public class DialogWindow<S extends Screen<?>> implements HasSize, HasTheme,
         ApplicationContextAware, InitializingBean {
 
     protected static final String BASE_STYLE_NAME = "jmix-dialog-window";
@@ -73,7 +74,8 @@ public class DialogWindow<S extends Screen> implements HasSize, HasTheme,
     }
 
     protected void initDialog(Dialog dialog) {
-        String screenTitle = UiControllerUtils.getTitle(screen);
+        String screenTitle = applicationContext.getBean(ScreenSupport.class)
+                .getLocalizedPageTitle(screen);
 
         dialog.setCloseOnEsc(false);
         dialog.setCloseOnOutsideClick(false);
@@ -265,7 +267,7 @@ public class DialogWindow<S extends Screen> implements HasSize, HasTheme,
     }
 
     //    @TriggerOnce
-    public static class AfterOpenEvent<S extends Screen> extends EventObject {
+    public static class AfterOpenEvent<S extends Screen<?>> extends EventObject {
 
         public AfterOpenEvent(DialogWindow<S> source) {
             super(source);
@@ -283,7 +285,7 @@ public class DialogWindow<S extends Screen> implements HasSize, HasTheme,
     }
 
     //    @TriggerOnce
-    public static class AfterCloseEvent<S extends Screen> extends EventObject {
+    public static class AfterCloseEvent<S extends Screen<?>> extends EventObject {
 
         protected final CloseAction closeAction;
 

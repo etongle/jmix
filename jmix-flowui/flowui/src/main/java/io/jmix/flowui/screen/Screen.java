@@ -1,13 +1,14 @@
 package io.jmix.flowui.screen;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.component.layout.ScreenLayout;
 import io.jmix.flowui.model.ScreenData;
 import io.jmix.flowui.sys.ScreenSupport;
+import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -15,7 +16,7 @@ import org.springframework.context.ApplicationContext;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class Screen extends Composite<ScreenLayout>
+public class Screen<T extends Component> extends Composite<T>
         implements BeforeEnterObserver, AfterNavigationObserver, BeforeLeaveObserver {
 
     private ApplicationContext applicationContext;
@@ -23,13 +24,13 @@ public class Screen extends Composite<ScreenLayout>
     private ScreenData screenData;
     private ScreenActions screenActions;
 
-    private Consumer<Screen> closeDelegate;
+    private Consumer<Screen<T>> closeDelegate;
 
     public Screen() {
         closeDelegate = createDefaultScreenDelegate();
     }
 
-    private Consumer<Screen> createDefaultScreenDelegate() {
+    private Consumer<Screen<T>> createDefaultScreenDelegate() {
         return screen -> getScreenSupport().close(this);
     }
 
@@ -43,15 +44,9 @@ public class Screen extends Composite<ScreenLayout>
     }
 
     @Override
-    protected ScreenLayout initContent() {
-        ScreenLayout content = super.initContent();
-        content.setSizeFull();
-
-        return content;
-    }
-
-    @Override
     public void afterNavigation(AfterNavigationEvent event) {
+        updatePageTitle();
+
         fireEvent(new AfterShowEvent(this));
     }
 
@@ -64,12 +59,17 @@ public class Screen extends Composite<ScreenLayout>
     public void beforeLeave(BeforeLeaveEvent event) {
         if (!event.isPostponed()) {
             unregisterBackNavigation();
+            removeApplicationListeners();
         }
     }
 
     protected void unregisterBackNavigation() {
         ScreenSupport screenSupport = getScreenSupport();
         screenSupport.unregisterBackNavigation(this);
+    }
+
+    protected void removeApplicationListeners() {
+        getApplicationContext().getBean(UiEventsManager.class).removeApplicationListeners(this);
     }
 
     public OperationResult closeWithDefaultAction() {
@@ -96,11 +96,11 @@ public class Screen extends Composite<ScreenLayout>
         return OperationResult.success();
     }
 
-    Consumer<Screen> getCloseDelegate() {
+    Consumer<Screen<T>> getCloseDelegate() {
         return closeDelegate;
     }
 
-    void setCloseDelegate(Consumer<Screen> closeDelegate) {
+    void setCloseDelegate(Consumer<Screen<T>> closeDelegate) {
         this.closeDelegate = closeDelegate;
     }
 
@@ -118,6 +118,12 @@ public class Screen extends Composite<ScreenLayout>
 
     protected void setScreenActions(ScreenActions screenActions) {
         this.screenActions = screenActions;
+    }
+
+    protected void updatePageTitle() {
+        String pageTitle = applicationContext.getBean(ScreenSupport.class)
+                .getLocalizedPageTitle(this);
+        getUI().ifPresent(ui -> ui.getPage().setTitle(pageTitle));
     }
 
     @Override
@@ -165,37 +171,37 @@ public class Screen extends Composite<ScreenLayout>
     }
 
     //    @TriggerOnce
-    public static class InitEvent extends ComponentEvent<Screen> {
+    public static class InitEvent extends ComponentEvent<Screen<?>> {
 
-        public InitEvent(Screen source) {
+        public InitEvent(Screen<?> source) {
             super(source, false);
         }
     }
 
     //    @TriggerOnce
-    public static class BeforeShowEvent extends ComponentEvent<Screen> {
+    public static class BeforeShowEvent extends ComponentEvent<Screen<?>> {
 
-        public BeforeShowEvent(Screen source) {
+        public BeforeShowEvent(Screen<?> source) {
             super(source, false);
         }
     }
 
     //    @TriggerOnce
-    public static class AfterShowEvent extends ComponentEvent<Screen> {
+    public static class AfterShowEvent extends ComponentEvent<Screen<?>> {
 
-        public AfterShowEvent(Screen source) {
+        public AfterShowEvent(Screen<?> source) {
             super(source, false);
         }
     }
 
-    public static class BeforeCloseEvent extends ComponentEvent<Screen> {
+    public static class BeforeCloseEvent extends ComponentEvent<Screen<?>> {
 
         protected final CloseAction closeAction;
 
         protected OperationResult closeResult;
         protected boolean closePrevented = false;
 
-        public BeforeCloseEvent(Screen source, CloseAction closeAction) {
+        public BeforeCloseEvent(Screen<?> source, CloseAction closeAction) {
             super(source, false);
             this.closeAction = closeAction;
         }
@@ -226,11 +232,11 @@ public class Screen extends Composite<ScreenLayout>
         }
     }
 
-    public static class AfterCloseEvent extends ComponentEvent<Screen> {
+    public static class AfterCloseEvent extends ComponentEvent<Screen<?>> {
 
         protected final CloseAction closeAction;
 
-        public AfterCloseEvent(Screen source, CloseAction closeAction) {
+        public AfterCloseEvent(Screen<?> source, CloseAction closeAction) {
             super(source, false);
             this.closeAction = closeAction;
         }

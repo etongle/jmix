@@ -1,12 +1,12 @@
 package io.jmix.flowui.sys;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.ExtendedClientDetails;
 import com.vaadin.flow.internal.Pair;
-import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.flow.router.RouteData;
-import com.vaadin.flow.router.RouterLayout;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
+import io.jmix.core.MessageTools;
 import io.jmix.flowui.action.binder.ActionBinders;
 import io.jmix.flowui.model.ScreenData;
 import io.jmix.flowui.screen.*;
@@ -67,7 +67,7 @@ public class ScreenSupport {
         this.navigationSupport = navigationSupport;
     }
 
-    public void initScreen(Screen screen) {
+    public void initScreen(Screen<?> screen) {
         log.debug("Init screen: " + screen);
 
         UiControllerUtils.setScreenData(screen, applicationContext.getBean(ScreenData.class));
@@ -76,7 +76,10 @@ public class ScreenSupport {
         ScreenActions actions = applicationContext.getBean(ScreenActions.class, actionBinders.binder(screen));
         UiControllerUtils.setScreenActions(screen, actions);
 
-        ScreenInfo screenInfo = getScreenInfo(screen);
+        String screenId = getInferredScreenId(screen);
+        screen.setId(screenId);
+
+        ScreenInfo screenInfo = screenRegistry.getScreenInfo(screenId);
 
         ComponentLoaderContext componentLoaderContext = createComponentLoaderContext();
 
@@ -89,7 +92,8 @@ public class ScreenSupport {
 
         Element element = loadScreenXml(screenInfo);
         if (element != null) {
-            loadMessageGroup(element, componentLoaderContext);
+            loadMessageGroup(element)
+                    .ifPresent(componentLoaderContext::setMessageGroup);
             loadWindowFromXml(element, screen, componentLoaderContext);
         }
 
@@ -130,7 +134,7 @@ public class ScreenSupport {
         session.setAttribute(BackNavigationTargets.class, targets);
     }
 
-    public void unregisterBackNavigation(Screen screen) {
+    public void unregisterBackNavigation(Screen<?> screen) {
         UI ui = screen.getUI().orElse(UI.getCurrent());
         unregisterBackNavigation(ui, screen.getClass());
     }
@@ -157,12 +161,67 @@ public class ScreenSupport {
         }
     }
 
-    public void close(Screen screen) {
+    /**
+     * Gets localized page title from the screen.
+     *
+     * @param screen screen to get localized page title
+     * @return localized page title or message key if not found or empty string if message key is not defined
+     * @see PageTitle
+     * @see HasDynamicTitle
+     */
+    public String getLocalizedPageTitle(Screen<?> screen) {
+        String title = UiControllerUtils.getPageTitle(screen);
+
+        if (!Strings.isNullOrEmpty(title)) {
+            MessageTools messageTools = applicationContext.getBean(MessageTools.class);
+            String messagesGroup = UiControllerUtils.getPackage(screen.getClass());
+
+            String screenId = screen.getId().orElse("");
+            if (!Strings.isNullOrEmpty(screenId)) {
+                ScreenInfo screenInfo = screenRegistry.getScreenInfo(screenId);
+                Element element = loadScreenXml(screenInfo);
+                if (element != null) {
+                    messagesGroup = loadMessageGroup(element).orElse(messagesGroup);
+                }
+            }
+
+            if (!title.contains(MessageTools.MARK)) {
+                return messageTools.loadString(messagesGroup, MessageTools.MARK + title);
+            }
+
+            return messageTools.loadString(messagesGroup, title);
+        }
+
+        String screenId = screen.getId().orElse("");
+        if (Strings.isNullOrEmpty(screenId)) {
+            return "";
+        }
+
+        ScreenInfo screenInfo = screenRegistry.getScreenInfo(screenId);
+        Element element = loadScreenXml(screenInfo);
+        if (element != null) {
+            MessageTools messageTools = applicationContext.getBean(MessageTools.class);
+
+            title = element.attributeValue("title");
+            if (Strings.isNullOrEmpty(title)) {
+                return "";
+            }
+
+            String messagesGroup = loadMessageGroup(element)
+                    .orElse(UiControllerUtils.getPackage(screen.getClass()));
+
+            return messageTools.loadString(messagesGroup, title);
+        }
+
+        return "";
+    }
+
+    public void close(Screen<?> screen) {
         UI ui = screen.getUI().orElse(UI.getCurrent());
         close(ui, screen);
     }
 
-    public void close(UI ui, Screen screen) {
+    public void close(UI ui, Screen<?> screen) {
         log.debug("Close screen: " + screen);
 
         // Check if a back navigation target for the given screen class is registered
@@ -182,12 +241,12 @@ public class ScreenSupport {
                 .allMatch(pair -> pair.getFirst().equals(screenClass));
     }
 
-    protected void navigateToBackTarget(UI ui, Screen screen) {
+    protected void navigateToBackTarget(UI ui, Screen<?> screen) {
         retrieveExtendedClientDetails(ui, details ->
                 navigateToBackTarget(ui.getSession(), details.getWindowName(), screen));
     }
 
-    protected void navigateToBackTarget(VaadinSession session, String windowName, Screen screen) {
+    protected void navigateToBackTarget(VaadinSession session, String windowName, Screen<?> screen) {
         BackNavigationTargets targets = session.getAttribute(BackNavigationTargets.class);
         if (targets != null && targets.containsKey(windowName)
                 && targets.get(windowName).getFirst().equals(screen.getClass())) {
@@ -199,7 +258,7 @@ public class ScreenSupport {
         }
     }
 
-    protected void navigateToParentLayout(Screen screen) {
+    protected void navigateToParentLayout(Screen<?> screen) {
         RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
         List<RouteData> routes = routeConfiguration.getAvailableRoutes();
 
@@ -225,7 +284,7 @@ public class ScreenSupport {
         ui.getPage().retrieveExtendedClientDetails(details::accept);
     }
 
-    protected ScreenInfo getScreenInfo(Screen screen) {
+    protected String getInferredScreenId(Screen<?> screen) {
         Class<? extends Screen> screenClass = screen.getClass();
 
         UiController uiController = screenClass.getAnnotation(UiController.class);
@@ -234,12 +293,10 @@ public class ScreenSupport {
                     " annotation for class " + screenClass);
         }
 
-        String screenId = UiDescriptorUtils.getInferredScreenId(uiController, screenClass);
-
-        return screenRegistry.getScreenInfo(screenId);
+        return UiDescriptorUtils.getInferredScreenId(uiController, screenClass);
     }
 
-    protected void fireScreenInitEvent(Screen screen) {
+    protected void fireScreenInitEvent(Screen<?> screen) {
         UiControllerUtils.fireEvent(screen, new InitEvent(screen));
     }
 
@@ -249,21 +306,18 @@ public class ScreenSupport {
         return templatePath.map(s -> screenXmlLoader.load(s)).orElse(null);
     }
 
-
-    protected void loadMessageGroup(Element element, ComponentLoaderContext componentLoaderContext) {
+    protected Optional<String> loadMessageGroup(Element element) {
         String messageGroup = element.attributeValue("messagesGroup");
-        if (messageGroup != null) {
-            componentLoaderContext.setMessageGroup(messageGroup);
-        }
+        return Optional.ofNullable(messageGroup);
     }
 
     protected ComponentLoaderContext createComponentLoaderContext() {
         return new ComponentLoaderContext();
     }
 
-    protected void loadWindowFromXml(Element element, Screen screen, ComponentLoaderContext context) {
+    protected void loadWindowFromXml(Element element, Screen<?> screen, ComponentLoaderContext context) {
         LayoutLoader layoutLoader = applicationContext.getBean(LayoutLoader.class, context);
-        ComponentLoader<Screen> screenLoader = layoutLoader.createScreenContent(screen, element);
+        ComponentLoader<Screen<?>> screenLoader = layoutLoader.createScreenContent(screen, element);
 
         screenLoader.loadComponent();
     }
