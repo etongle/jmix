@@ -17,55 +17,29 @@
 package io.jmix.flowui.menu;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.details.Details;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.ListItem;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.html.UnorderedList;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.router.HighlightConditions;
-import com.vaadin.flow.router.RouterLink;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.menu.ListMenu;
 import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.ScreenInfo;
 import io.jmix.flowui.screen.ScreenRegistry;
 import io.jmix.flowui.sys.FlowuiAccessChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-@org.springframework.stereotype.Component("flowui_ListMenuBuilder")
+@Component("flowui_ListMenuBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ListMenuBuilder {
     private static final Logger log = LoggerFactory.getLogger(ListMenuBuilder.class);
-
-    /* Lumo styles */
-    protected static final String TEXT_SMALL_STYLE_NAME = "text-s";
-    protected static final String LIST_NONE_STYLE_NAME = "list-none";
-    protected static final String MARGIN_NONE_STYLE_NAME = "m-0";
-    protected static final String PADDING_NONE_STYLE_NAME = "p-0";
-    protected static final String FLEX_STYLE_NAME = "flex";
-    protected static final String FONT_MEDIUM_STYLE_NAME = "font-medium";
-
-    protected static final String JMIX_LIST_MENU_STYLE_NAME = "jmix-list-menu";
-
-    protected static final String JMIX_MENUBAR_ITEM_STYLE_NAME = "jmix-menubar-item";
-    protected static final String JMIX_MENUBAR_SUMMARY_ICON_CONTAINER_STYLE_NAME = "jmix-menubar-summary-icon-container";
-    protected static final String MENUBAR_SUMMARY_STYLE_NAME = "menubar-summary";
-    protected static final String MENUBAR_ICON_STYLE_NAME = "menubar-icon";
-    protected static final String MENUBAR_LIST_STYLE_NAME = "menubar-list";
-
-    protected static final String JMIX_MENU_ITEM_LINK_STYLE_NAME = "jmix-menu-item-link";
-    protected static final String LINK_ICON_STYLE_NAME = "link-icon";
-    protected static final String LINK_TEXT_STYLE_NAME = "link-text";
 
     protected MenuConfig menuConfig;
     protected ScreenRegistry screenRegistry;
@@ -73,7 +47,6 @@ public class ListMenuBuilder {
     protected MessageTools messageTools;
     protected FlowuiAccessChecker flowuiAccessChecker;
 
-    @Autowired
     public ListMenuBuilder(MenuConfig menuConfig,
                            ScreenRegistry screenRegistry,
                            UiComponents uiComponents,
@@ -86,138 +59,98 @@ public class ListMenuBuilder {
         this.flowuiAccessChecker = flowuiAccessChecker;
     }
 
-    public Component build() {
-        return build(menuConfig.getRootItems());
+    public ListMenu build() {
+        ListMenu listMenu = uiComponents.create(ListMenu.class);
+
+        build(listMenu);
+
+        return listMenu;
     }
 
-    protected Component build(List<MenuItem> rootItems) {
-        UnorderedList menuList = uiComponents.create(UnorderedList.class);
-        menuList.addClassNames(JMIX_LIST_MENU_STYLE_NAME, LIST_NONE_STYLE_NAME);
+    public void build(ListMenu listMenu) {
+        List<MenuItem> rootItems = menuConfig.getRootItems();
 
         for (MenuItem menuItem : rootItems) {
-            Component component = createMenu(menuItem);
-            if (component != null) {
-                menuList.add(new ListItem(component));
-            }
+            createListMenu(menuItem)
+                    .ifPresent(listMenu::addMenuItem);
         }
-
-        return menuList;
     }
 
-    protected Details createMenuBarComponent(MenuItem menuItem) {
-        Details menuItemComponent = new Details();
-        menuItemComponent.addClassName(JMIX_MENUBAR_ITEM_STYLE_NAME);
-        menuItemComponent.addClassNames(getClassNames(menuItem));
-        menuItemComponent.setOpened(menuItem.isOpened());
-
-        Span summary = new Span();
-        summary.setText(menuConfig.getItemTitle(menuItem));
-        summary.addClassNames(MENUBAR_SUMMARY_STYLE_NAME, TEXT_SMALL_STYLE_NAME);
-
-        Icon icon = null;
-        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            icon = new Icon(VaadinIcon.valueOf(menuItem.getIcon()));
-            icon.addClassName(MENUBAR_ICON_STYLE_NAME);
-        }
-
-        if (icon != null) {
-            Div div = new Div();
-            div.add(icon, summary);
-            div.addClassName(JMIX_MENUBAR_SUMMARY_ICON_CONTAINER_STYLE_NAME);
-            div.setTitle(getDescription(menuItem));
-            menuItemComponent.setSummary(div);
-        } else {
-            summary.setTitle(getDescription(menuItem));
-            menuItemComponent.setSummary(summary);
-        }
-
-        UnorderedList menuList = new UnorderedList();
-        menuList.addClassNames(MENUBAR_LIST_STYLE_NAME, LIST_NONE_STYLE_NAME, MARGIN_NONE_STYLE_NAME,
-                PADDING_NONE_STYLE_NAME);
-
-        menuItemComponent.setContent(menuList);
-
-        return menuItemComponent;
-    }
-
-    @Nullable
-    protected Component createMenu(MenuItem menuItem) {
+    protected Optional<ListMenu.MenuItem> createListMenu(MenuItem menuItem) {
         if (menuItem.isMenu()) {
             if (menuItem.getChildren().isEmpty()) {
-                log.debug("Menu item '{}' is skipped as it does not have children", menuItem.getId());
-                return null;
+                log.warn("Menu bar item '{}' is skipped as it does not have children", menuItem.getId());
+                return Optional.empty();
             }
-            Details menuBar = createMenuBarComponent(menuItem);
-            UnorderedList content = getMenuBarContent(menuBar);
-            for (MenuItem childItem : menuItem.getChildren()) {
-                Component component = createMenu(childItem);
-                if (component != null) {
-                    content.add(new ListItem(component));
-                }
+
+            ListMenu.MenuBarItem menuBarItem = createMenuBar(menuItem);
+
+            for (MenuItem item : menuItem.getChildren()) {
+                createListMenu(item)
+                        .ifPresent(menuBarItem::addChildItem);
             }
-            // do not return empty menu bar
-            if (!content.getChildren().findAny().isPresent()) {
-                log.debug("Menu item '{}' is skipped as it does not have children or they are not permitted by " +
+
+            if (!menuBarItem.hasChildren()) {
+                log.debug("Menu bar item '{}' is skipped as it does not have children or they are not permitted by " +
                         "access constraint", menuItem.getId());
-                return null;
+                return Optional.empty();
             }
-            return menuBar;
-        } else if (!Strings.isNullOrEmpty(menuItem.getScreen())) {
-            return createMenuItemComponent(menuItem);
+
+            return Optional.of(menuBarItem);
         } else {
-            return null;
+            if (!isPermitted(menuItem)) {
+                log.debug("Menu item '{}' is not permitted by access constraint", menuItem.getId());
+                return Optional.empty();
+            }
+
+            ListMenu.MenuItem listMenuItem = createMenItem(menuItem);
+
+            return Optional.of(listMenuItem);
         }
     }
 
-    protected UnorderedList getMenuBarContent(Details menuBar) {
-        return menuBar.getContent()
-                .filter(component -> component instanceof UnorderedList)
-                .map(component -> (UnorderedList) component)
-                .findFirst()
-                .orElseThrow(() ->
-                        new IllegalStateException("Menu bar component does not have content component: "
-                                + UnorderedList.class.getName()));
+    protected ListMenu.MenuBarItem createMenuBar(MenuItem menuItem) {
+        ListMenu.MenuBarItem menuBarItem = new ListMenu.MenuBarItem(menuItem.getId())
+                .withOpened(menuItem.isOpened())
+                .withTitle(menuConfig.getItemTitle(menuItem))
+                .withDescription(getDescription(menuItem))
+                .withClassNames(Arrays.asList(getClassNames(menuItem)))
+                .withControllerClass(getControllerClass(menuItem));
+
+        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
+            menuBarItem.setIcon(VaadinIcon.valueOf(menuItem.getIcon()));
+        }
+        return menuBarItem;
+    }
+
+    protected ListMenu.MenuItem createMenItem(MenuItem menuItem) {
+        ListMenu.MenuItem listMenuItem = new ListMenu.MenuItem(menuItem.getId())
+                .withTitle(menuConfig.getItemTitle(menuItem))
+                .withDescription(getDescription(menuItem))
+                .withClassNames(Arrays.asList(getClassNames(menuItem)));
+
+        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
+            listMenuItem.setIcon(VaadinIcon.valueOf(menuItem.getIcon()));
+        }
+        return listMenuItem;
     }
 
     @Nullable
-    protected RouterLink createMenuItemComponent(MenuItem menuItem) {
-        if (!isPermitted(menuItem)) {
-            log.debug("Menu item '{}' is not permitted by access constraint", menuItem.getId());
+    protected Class<? extends Screen<?>> getControllerClass(MenuItem menuItem) {
+        if (Strings.isNullOrEmpty(menuItem.getScreen())) {
             return null;
         }
-
-        RouterLink routerLink = new RouterLink();
-        routerLink.addClassNames(JMIX_MENU_ITEM_LINK_STYLE_NAME, FLEX_STYLE_NAME);
-        routerLink.addClassNames(getClassNames(menuItem));
-        routerLink.setRoute(getControllerClass(menuItem));
-        routerLink.setHighlightCondition(HighlightConditions.sameLocation());
-
-        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            Icon icon = new Icon(VaadinIcon.valueOf(menuItem.getIcon()));
-            icon.addClassName(LINK_ICON_STYLE_NAME);
-            routerLink.add(icon);
-        }
-
-        Span text = new Span(menuConfig.getItemTitle(menuItem));
-        text.addClassNames(LINK_TEXT_STYLE_NAME, FONT_MEDIUM_STYLE_NAME, TEXT_SMALL_STYLE_NAME);
-        text.setTitle(getDescription(menuItem));
-
-        routerLink.add(text);
-
-        return routerLink;
-    }
-
-    protected Class<? extends Screen<?>> getControllerClass(MenuItem menuItem) {
         ScreenInfo screenInfo = screenRegistry.getScreenInfo(menuItem.getScreen());
         return screenInfo.getControllerClass();
     }
 
+    @Nullable
     protected String getDescription(MenuItem menuItem) {
         String description = menuItem.getDescription();
         if (!Strings.isNullOrEmpty(description)) {
             return messageTools.loadString(description);
         }
-        return "";
+        return null;
     }
 
     protected String[] getClassNames(MenuItem menuItem) {

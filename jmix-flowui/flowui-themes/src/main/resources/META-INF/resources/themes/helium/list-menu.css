@@ -17,6 +17,7 @@
 .jmix-list-menu {
     color: var(--lumo-secondary-text-color);
     margin: 0 var(--lumo-space-s);
+    overflow: auto;
     padding: 0;
 }
 

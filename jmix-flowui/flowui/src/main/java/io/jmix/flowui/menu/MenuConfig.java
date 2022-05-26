@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -52,30 +51,28 @@ public class MenuConfig {
 
     protected List<MenuItem> rootItems = new ArrayList<>();
 
-    @Autowired
     protected Resources resources;
-
-    @Autowired
     protected Messages messages;
-
-    @Autowired
     protected MessageTools messageTools;
-
-    @Autowired
     protected Dom4jTools dom4JTools;
-
-    @Autowired
     protected Environment environment;
-
-    @Autowired
     protected FlowuiProperties flowuiProperties;
-
-    @Autowired
     protected JmixModules modules;
 
     protected volatile boolean initialized;
 
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
+
+    public MenuConfig(Resources resources, Messages messages, MessageTools messageTools, Dom4jTools dom4JTools,
+                      Environment environment, FlowuiProperties flowuiProperties, JmixModules modules) {
+        this.resources = resources;
+        this.messages = messages;
+        this.messageTools = messageTools;
+        this.dom4JTools = dom4JTools;
+        this.environment = environment;
+        this.flowuiProperties = flowuiProperties;
+        this.modules = modules;
+    }
 
     public String getItemTitle(String id) {
         return messages.getMessage("menu-config." + id);

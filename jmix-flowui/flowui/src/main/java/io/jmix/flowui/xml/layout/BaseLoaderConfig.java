@@ -68,6 +68,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("datePicker", DatePickerLoader.class);
         loaders.put("avatar", AvatarLoader.class);
         loaders.put("select", SelectLoader.class);
+        loaders.put("listMenu", ListMenuLoader.class);
 
         /*HTML components*/
         loaders.put("param", ParamLoader.class);
