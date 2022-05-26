@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit;
 
+import com.vaadin.flow.component.html.Anchor;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.meta.StudioFlowComponent;
 import io.jmix.flowui.kit.meta.StudioFlowComponents;
@@ -31,13 +32,17 @@ public interface StudioFlowUiKit {
             xmlElement = "button",
             icon = "io/jmix/flowui/kit/meta/component/button.svg",
             properties = {
-                    @StudioFlowProperty(xmlAttribute = "autofocus", type = StudioFlowPropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioFlowProperty(xmlAttribute = "autofocus", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
-                    @StudioFlowProperty(xmlAttribute = "disableOnClick", type = StudioFlowPropertyType.BOOLEAN, defaultValue = "false"),
-                    @StudioFlowProperty(xmlAttribute = "enable", type = StudioFlowPropertyType.BOOLEAN, setMethod = "setEnabled", defaultValue = "true"),
+                    @StudioFlowProperty(xmlAttribute = "disableOnClick", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioFlowProperty(xmlAttribute = "enable", type = StudioFlowPropertyType.BOOLEAN,
+                            setMethod = "setEnabled", defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "icon", type = StudioFlowPropertyType.ICON),
-                    @StudioFlowProperty(xmlAttribute = "iconAfterText", type = StudioFlowPropertyType.BOOLEAN, defaultValue = "false"),
+                    @StudioFlowProperty(xmlAttribute = "iconAfterText", type = StudioFlowPropertyType.BOOLEAN,
+                            defaultValue = "false"),
                     @StudioFlowProperty(xmlAttribute = "id", type = StudioFlowPropertyType.COMPONENT_ID),
                     @StudioFlowProperty(xmlAttribute = "maxHeight", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "maxWidth", type = StudioFlowPropertyType.SIZE),
@@ -48,12 +53,48 @@ public interface StudioFlowUiKit {
                             options = {"small", "large", "tertiary", "tertiary-inline", "primary", "success", "error",
                                     "contrast", "icon", "contained", "outlined"}),
                     @StudioFlowProperty(xmlAttribute = "title", type = StudioFlowPropertyType.STRING),
-                    @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
+                            setMethod = "setVisible", defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "whiteSpace", type = StudioFlowPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
-                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT", "INITIAL"}),
+                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
+                                    "INITIAL"}),
                     @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
             }
     )
     JmixButton button();
+
+    //HTML
+    @StudioFlowComponent(
+            name = "Anchor",
+            category = "Components",
+            xmlElement = "anchor",
+//            icon = "",
+            properties = {
+                    @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
+                    @StudioFlowProperty(xmlAttribute = "enabled", type = StudioFlowPropertyType.BOOLEAN,
+                            setMethod = "setEnabled", defaultValue = "true"),
+                    @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "href", type = StudioFlowPropertyType.STRING),
+                    @StudioFlowProperty(xmlAttribute = "id", type = StudioFlowPropertyType.STRING),
+                    @StudioFlowProperty(xmlAttribute = "maxHeight", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "maxWidth", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "minHeight", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "minWidth", type = StudioFlowPropertyType.SIZE),
+                    @StudioFlowProperty(xmlAttribute = "target", type = StudioFlowPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.html.AnchorTarget", defaultValue = "DEFAULT",
+                            options = {"DEFAULT", "SELF", "BLANK", "PARENT", "TOP"}),
+                    @StudioFlowProperty(xmlAttribute = "themeName", type = StudioFlowPropertyType.VALUES_LIST,
+                            options = {"normal", "success", "error", "contrast", "primary", "small", "pill"}),
+                    @StudioFlowProperty(xmlAttribute = "title", type = StudioFlowPropertyType.STRING),
+                    @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
+                            setMethod = "setVisible", defaultValue = "true"),
+                    @StudioFlowProperty(xmlAttribute = "whiteSpace", type = StudioFlowPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
+                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
+                                    "INITIAL"}),
+                    @StudioFlowProperty(xmlAttribute = "width", type = StudioFlowPropertyType.SIZE)
+            }
+    )
+    Anchor anchor();
 }
