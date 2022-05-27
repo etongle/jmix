@@ -17,13 +17,13 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import com.google.common.base.Strings;
-import io.jmix.flowui.component.menu.ListMenu;
+import io.jmix.flowui.component.menu.JmixListMenu;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
 
 import java.util.Optional;
 
-public class ListMenuLoader extends AbstractComponentLoader<ListMenu> {
+public class ListMenuLoader extends AbstractComponentLoader<JmixListMenu> {
 
     @Override
     public void loadComponent() {
@@ -35,8 +35,8 @@ public class ListMenuLoader extends AbstractComponentLoader<ListMenu> {
     }
 
     @Override
-    protected ListMenu createComponent() {
-        return factory.create(ListMenu.class);
+    protected JmixListMenu createComponent() {
+        return factory.create(JmixListMenu.class);
     }
 
     protected Optional<Boolean> loadLoadMenuConfig(Element element) {

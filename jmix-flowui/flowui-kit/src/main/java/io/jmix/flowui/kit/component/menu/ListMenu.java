@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.menu;
+package io.jmix.flowui.kit.component.menu;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.HasStyle;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.ListItem;
@@ -29,27 +28,13 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
-import io.jmix.core.common.datastruct.Pair;
-import io.jmix.core.common.util.Preconditions;
-import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.menu.ListMenuBuilder;
-import io.jmix.flowui.menu.MenuConfig;
-import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.ScreenInfo;
-import io.jmix.flowui.screen.ScreenRegistry;
-import io.jmix.flowui.screen.UiController;
-import io.jmix.flowui.sys.UiDescriptorUtils;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 
-public class ListMenu extends Composite<UnorderedList> implements HasSize, HasStyle,
-        ApplicationContextAware, InitializingBean {
+public class ListMenu extends Composite<UnorderedList> implements HasSize, HasStyle {
 
     protected static final String TEXT_SMALL_STYLE_NAME = "text-s";
     protected static final String LIST_NONE_STYLE_NAME = "list-none";
@@ -70,41 +55,15 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     protected static final String LINK_ICON_STYLE_NAME = "link-icon";
     protected static final String LINK_TEXT_STYLE_NAME = "link-text";
 
-    protected ApplicationContext applicationContext;
-
-    protected UiComponents uiComponents;
-    protected ScreenRegistry screenRegistry;
-
     protected List<MenuItem> rootMenuItems = new ArrayList<>();
 
     protected Map<String, Pair<MenuItem, ListItem>> registrations = new HashMap<>();
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        autowireDependencies();
-        initComponent();
-    }
-
-    protected void autowireDependencies() {
-        uiComponents = applicationContext.getBean(UiComponents.class);
-        screenRegistry = applicationContext.getBean(ScreenRegistry.class);
-    }
-
-    protected void initComponent() {
-        getContent().addClassNames(JMIX_LIST_MENU_STYLE_NAME, LIST_NONE_STYLE_NAME);
-    }
-
-    /**
-     * Loads menu items from {@link MenuConfig}.
-     */
-    public void loadMenuConfig() {
-        applicationContext.getBean(ListMenuBuilder.class)
-                .build(this);
+    protected UnorderedList initContent() {
+        UnorderedList content = super.initContent();
+        content.addClassNames(JMIX_LIST_MENU_STYLE_NAME, LIST_NONE_STYLE_NAME);
+        return content;
     }
 
     /**
@@ -116,7 +75,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     @Nullable
     public MenuItem getMenuItem(String id) {
         if (registrations.containsKey(id)) {
-            return registrations.get(id).getFirst();
+            return registrations.get(id).getKey();
         }
         return null;
     }
@@ -134,7 +93,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
      * @param menuItem menu item to add
      */
     public void addMenuItem(MenuItem menuItem) {
-        Preconditions.checkNotNullArgument(menuItem);
+        Preconditions.checkNotNull(menuItem, MenuItem.class.getSimpleName() + " cannot be null");
         checkItemIdDuplicate(menuItem.getId());
 
         // create and register
@@ -155,7 +114,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
      * @param index    index to add menu item in the root items
      */
     public void addMenuItem(MenuItem menuItem, int index) {
-        Preconditions.checkNotNullArgument(menuItem);
+        Preconditions.checkNotNull(menuItem, MenuItem.class.getSimpleName() + " cannot be null");
 
         MenuItem itemToAdd = menuItem;
         if (rootMenuItems.contains(itemToAdd)) {
@@ -187,8 +146,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
      * @param menuItem menu item to remove
      */
     public void removeMenuItem(MenuItem menuItem) {
-        Preconditions.checkNotNullArgument(menuItem);
-
         if (!menuItem.isAttachedToMenu()
                 || menuItem.getMenuComponent() != this) {
             throw new IllegalArgumentException(MenuItem.class.getSimpleName() + "is not attached to the menu");
@@ -198,15 +155,15 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         if (menuItemEntry == null) {
             return;
         }
-        menuItem = menuItemEntry.getFirst();
+        menuItem = menuItemEntry.getKey();
 
         // if is root
         rootMenuItems.remove(menuItem);
 
         // remove component
-        menuItemEntry.getSecond().getParent()
+        menuItemEntry.getValue().getParent()
                 .map(parent -> (UnorderedList) parent)
-                .ifPresent(parent -> parent.remove(menuItemEntry.getSecond()));
+                .ifPresent(parent -> parent.remove(menuItemEntry.getValue()));
 
         detachMenuItemRecursively(menuItem);
         unregisterMenuItemRecursively(menuItem);
@@ -267,7 +224,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
             return menuBarComponent;
         } else {
-            RouterLink link = createMenuItemComponent(menuItem);
+            Component link = createMenuItemComponent(menuItem);
             ListItem menuItemComponent = new ListItem(link);
 
             registerMenuItem(menuItem, menuItemComponent);
@@ -307,15 +264,14 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     }
 
     protected void registerMenuItem(MenuItem menuItem, ListItem menuItemComponent) {
-        registrations.put(menuItem.getId(), new Pair<>(menuItem, menuItemComponent));
+        registrations.put(menuItem.getId(), Pair.of(menuItem, menuItemComponent));
     }
 
     protected RouterLink createMenuItemComponent(MenuItem menuItem) {
         RouterLink routerLink = new RouterLink();
         routerLink.addClassNames(JMIX_MENU_ITEM_LINK_STYLE_NAME, FLEX_STYLE_NAME);
         routerLink.addClassNames(menuItem.getClassNames().toArray(new String[0]));
-        routerLink.setRoute(getControllerClass(menuItem));
-        routerLink.setHighlightCondition(HighlightConditions.sameLocation());
+        routerLink.setHighlightCondition(HighlightConditions.never());
 
         if (menuItem.getIcon() != null) {
             Icon icon = new Icon(menuItem.getIcon());
@@ -327,9 +283,19 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         text.addClassNames(LINK_TEXT_STYLE_NAME, FONT_MEDIUM_STYLE_NAME, TEXT_SMALL_STYLE_NAME);
         text.setTitle(Strings.nullToEmpty(menuItem.getDescription()));
 
+        addMenuItemClickListener(routerLink, menuItem);
+
         routerLink.add(text);
 
         return routerLink;
+    }
+
+    protected void addMenuItemClickListener(RouterLink routerLink, MenuItem menuItem) {
+        routerLink.getElement().addEventListener("click", event -> {
+            if (menuItem.getClickHandler() != null) {
+                menuItem.getClickHandler().accept(menuItem);
+            }
+        });
     }
 
     protected Details createMenuBarComponent(MenuBarItem menuBarItem) {
@@ -368,20 +334,10 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         return menuItemComponent;
     }
 
-    protected Class<? extends Screen<?>> getControllerClass(MenuItem menuItem) {
-        Class<? extends Screen<?>> controllerClass = menuItem.getControllerClass();
-
-        if (controllerClass != null && isSupportedScreen(controllerClass)) {
-            return menuItem.getControllerClass();
-        }
-        ScreenInfo screenInfo = screenRegistry.getScreenInfo(menuItem.getId());
-        return screenInfo.getControllerClass();
-    }
-
     protected UnorderedList getMenuBarContent(MenuItem menuItem) {
         Pair<MenuItem, ListItem> item = registrations.get(menuItem.getId());
 
-        Details menuBarComponent = item.getSecond().getChildren()
+        Details menuBarComponent = item.getValue().getChildren()
                 .findFirst()
                 .map(details -> (Details) details)
                 .orElseThrow(() -> new IllegalStateException(ListItem.class.getSimpleName() + "cannot be empty"));
@@ -405,11 +361,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                 : menuItem.getTitle();
     }
 
-    protected boolean isSupportedScreen(Class<?> targetView) {
-        return Screen.class.isAssignableFrom(targetView)
-                && targetView.getAnnotation(UiController.class) != null;
-    }
-
     protected void checkItemIdDuplicate(String id) {
         if (registrations.containsKey(id)) {
             throw new IllegalArgumentException(String.format("Menu item with id \"%s\" already exists", id));
@@ -417,15 +368,15 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     }
 
     /**
-     * Describes menu item that allows user to navigate to screen.
+     * Describes menu item.
      */
     public static class MenuItem {
         protected String id;
         protected String title;
         protected String description;
         protected VaadinIcon icon;
-        protected Class<? extends Screen<?>> controllerClass;
         protected List<String> classNames;
+        protected Consumer<MenuItem> clickHandler;
 
         protected ListMenu menuComponent;
 
@@ -434,24 +385,13 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
 
         /**
-         * Creates menu item that should navigate to the screen with provided ID.
+         * Creates menu item with provided id.
          *
-         * @param screenId screen ID
+         * @param id menu item id
          * @return menu item
          */
-        public static MenuItem create(String screenId) {
-            return new MenuItem(screenId);
-        }
-
-        /**
-         * Creates menu item that should navigate to the screen with provided class.
-         *
-         * @param controllerClass screen class
-         * @return menu item
-         */
-        public static MenuItem create(Class<? extends Screen<?>> controllerClass) {
-            return new MenuItem(UiDescriptorUtils.getInferredScreenId(controllerClass))
-                    .withControllerClass(controllerClass);
+        public static MenuItem create(String id) {
+            return new MenuItem(id);
         }
 
         /**
@@ -480,15 +420,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * Sets displayed menu item text.
          *
          * @param title displayed text
-         */
-        public void setTitle(@Nullable String title) {
-            this.title = title;
-        }
-
-        /**
-         * Sets displayed menu item text.
-         *
-         * @param title displayed text
          * @return current menu instance
          */
         public MenuItem withTitle(@Nullable String title) {
@@ -502,15 +433,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         @Nullable
         public String getDescription() {
             return description;
-        }
-
-        /**
-         * Sets menu item description that should be shown when the user moves cursor on item.
-         *
-         * @param description description to set
-         */
-        public void setDescription(@Nullable String description) {
-            this.description = description;
         }
 
         /**
@@ -533,16 +455,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
 
         /**
-         * Sets icon that should be displayed to the left of the {@link #setTitle(String)}.
-         *
-         * @param icon icon to set
-         */
-        public void setIcon(@Nullable VaadinIcon icon) {
-            this.icon = icon;
-        }
-
-        /**
-         * Sets icon that should be displayed to the left of the {@link #setTitle(String)}.
+         * Sets icon that should be displayed to the left of the {@link #getTitle()}.
          *
          * @param icon icon to set
          * @return current menu instance
@@ -553,51 +466,12 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
 
         /**
-         * @return screen class or {@code null} if not set
-         */
-        @Nullable
-        public Class<? extends Screen<?>> getControllerClass() {
-            return controllerClass;
-        }
-
-        /**
-         * Sets screen class that should be shown when the user clicks on the menu item.
-         *
-         * @param controllerClass screen class to set
-         */
-        public void setControllerClass(@Nullable Class<? extends Screen<?>> controllerClass) {
-            this.controllerClass = controllerClass;
-        }
-
-        /**
-         * Sets screen class that should be shown when the user clicks on the menu item. If not set, {@link #getId()}
-         * will be used as screen id to navigate.
-         *
-         * @param controllerClass screen class to set
-         * @return current menu instance
-         */
-        public MenuItem withControllerClass(@Nullable Class<? extends Screen<?>> controllerClass) {
-            this.controllerClass = controllerClass;
-            return this;
-        }
-
-        /**
          * @return class names or empty list
          */
         public List<String> getClassNames() {
-            return CollectionUtils.isEmpty(classNames)
-                    ? Collections.emptyList()
-                    : Collections.unmodifiableList(classNames);
-        }
-
-        /**
-         * Sets class names that should be added to the menu item.
-         *
-         * @param classNames class names to add
-         */
-        public void setClassNames(List<String> classNames) {
-            Preconditions.checkNotNullArgument(classNames);
-            this.classNames = classNames;
+            return classNames != null && !classNames.isEmpty()
+                    ? Collections.unmodifiableList(classNames)
+                    : Collections.emptyList();
         }
 
         /**
@@ -607,7 +481,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @return current menu instance
          */
         public MenuItem withClassNames(List<String> classNames) {
-            Preconditions.checkNotNullArgument(classNames);
+            Preconditions.checkNotNull(classNames, "List of class names cannot be null");
             this.classNames = classNames;
             return this;
         }
@@ -618,13 +492,23 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @param classNames class names to add
          */
         public void addClassNames(String... classNames) {
-            Preconditions.checkNotNullArgument(classNames);
+            Preconditions.checkNotNull(classNames, "Class names parameter cannot be null");
 
             if (this.classNames == null) {
                 this.classNames = new ArrayList<>();
             }
 
             this.classNames.addAll(Arrays.asList(classNames));
+        }
+
+        @Nullable
+        public Consumer<MenuItem> getClickHandler() {
+            return clickHandler;
+        }
+
+        public MenuItem withClickHandler(@Nullable Consumer<MenuItem> clickHandler) {
+            this.clickHandler = clickHandler;
+            return this;
         }
 
         /**
@@ -705,11 +589,6 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
 
         @Override
-        public MenuBarItem withControllerClass(@Nullable Class<? extends Screen<?>> controllerClass) {
-            return (MenuBarItem) super.withControllerClass(controllerClass);
-        }
-
-        @Override
         public MenuBarItem withClassNames(List<String> classNames) {
             return (MenuBarItem) super.withClassNames(classNames);
         }
@@ -748,7 +627,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @param menuItem menu item to add
          */
         public void addChildItem(MenuItem menuItem) {
-            Preconditions.checkNotNullArgument(menuItem);
+            Preconditions.checkNotNull(menuItem, MenuItem.class.getSimpleName() + " cannot be null");
 
             if (children == null) {
                 children = new ArrayList<>();
@@ -769,7 +648,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @param menuItem menu item to add
          */
         public void addChildItem(MenuItem menuItem, int index) {
-            Preconditions.checkNotNullArgument(menuItem);
+            Preconditions.checkNotNull(menuItem, MenuItem.class.getSimpleName() + " cannot be null");
 
             if (children == null) {
                 children = new ArrayList<>();
@@ -799,7 +678,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @param menuItem menu item to remove
          */
         public void removeChildItem(MenuItem menuItem) {
-            if (CollectionUtils.isEmpty(children)) {
+            if (!hasChildren()) {
                 return;
             }
 
@@ -825,7 +704,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @param index index to remove
          */
         public void removeChildItem(int index) {
-            if (CollectionUtils.isEmpty(children)) {
+            if (!hasChildren()) {
                 return;
             }
 
@@ -840,7 +719,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * Removes all child items.
          */
         public void removeAllChildItems() {
-            if (CollectionUtils.isEmpty(children)) {
+            if (!hasChildren()) {
                 return;
             }
 
@@ -858,9 +737,9 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * @return immutable list of child items
          */
         public List<MenuItem> getChildren() {
-            return CollectionUtils.isEmpty(children)
-                    ? Collections.emptyList()
-                    : Collections.unmodifiableList(children);
+            return hasChildren()
+                    ? Collections.unmodifiableList(children)
+                    : Collections.emptyList();
         }
 
         /**
@@ -868,7 +747,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
          * {@code false} otherwise
          */
         public boolean hasChildren() {
-            return CollectionUtils.isNotEmpty(children);
+            return children != null && !children.isEmpty();
         }
 
         @Override

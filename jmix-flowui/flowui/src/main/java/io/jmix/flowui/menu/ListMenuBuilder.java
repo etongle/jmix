@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.core.MessageTools;
 import io.jmix.flowui.UiComponents;
-import io.jmix.flowui.component.menu.ListMenu;
+import io.jmix.flowui.component.menu.JmixListMenu;
 import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.ScreenInfo;
 import io.jmix.flowui.screen.ScreenRegistry;
@@ -59,15 +59,15 @@ public class ListMenuBuilder {
         this.flowuiAccessChecker = flowuiAccessChecker;
     }
 
-    public ListMenu build() {
-        ListMenu listMenu = uiComponents.create(ListMenu.class);
+    public JmixListMenu build() {
+        JmixListMenu listMenu = uiComponents.create(JmixListMenu.class);
 
         build(listMenu);
 
         return listMenu;
     }
 
-    public void build(ListMenu listMenu) {
+    public void build(JmixListMenu listMenu) {
         List<MenuItem> rootItems = menuConfig.getRootItems();
 
         for (MenuItem menuItem : rootItems) {
@@ -76,14 +76,14 @@ public class ListMenuBuilder {
         }
     }
 
-    protected Optional<ListMenu.MenuItem> createListMenu(MenuItem menuItem) {
+    protected Optional<JmixListMenu.MenuItem> createListMenu(MenuItem menuItem) {
         if (menuItem.isMenu()) {
             if (menuItem.getChildren().isEmpty()) {
                 log.warn("Menu bar item '{}' is skipped as it does not have children", menuItem.getId());
                 return Optional.empty();
             }
 
-            ListMenu.MenuBarItem menuBarItem = createMenuBar(menuItem);
+            JmixListMenu.MenuBarItem menuBarItem = createMenuBar(menuItem);
 
             for (MenuItem item : menuItem.getChildren()) {
                 createListMenu(item)
@@ -103,34 +103,33 @@ public class ListMenuBuilder {
                 return Optional.empty();
             }
 
-            ListMenu.MenuItem listMenuItem = createMenItem(menuItem);
+            JmixListMenu.MenuItem listMenuItem = createMenuItem(menuItem);
 
             return Optional.of(listMenuItem);
         }
     }
 
-    protected ListMenu.MenuBarItem createMenuBar(MenuItem menuItem) {
-        ListMenu.MenuBarItem menuBarItem = new ListMenu.MenuBarItem(menuItem.getId())
+    protected JmixListMenu.MenuBarItem createMenuBar(MenuItem menuItem) {
+        JmixListMenu.MenuBarItem menuBarItem = new JmixListMenu.MenuBarItem(menuItem.getId())
                 .withOpened(menuItem.isOpened())
-                .withTitle(menuConfig.getItemTitle(menuItem))
-                .withDescription(getDescription(menuItem))
-                .withClassNames(Arrays.asList(getClassNames(menuItem)))
-                .withControllerClass(getControllerClass(menuItem));
-
-        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            menuBarItem.setIcon(VaadinIcon.valueOf(menuItem.getIcon()));
-        }
-        return menuBarItem;
-    }
-
-    protected ListMenu.MenuItem createMenItem(MenuItem menuItem) {
-        ListMenu.MenuItem listMenuItem = new ListMenu.MenuItem(menuItem.getId())
                 .withTitle(menuConfig.getItemTitle(menuItem))
                 .withDescription(getDescription(menuItem))
                 .withClassNames(Arrays.asList(getClassNames(menuItem)));
 
         if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
-            listMenuItem.setIcon(VaadinIcon.valueOf(menuItem.getIcon()));
+            menuBarItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
+        }
+        return menuBarItem;
+    }
+
+    protected JmixListMenu.MenuItem createMenuItem(MenuItem menuItem) {
+        JmixListMenu.ScreenMenuItem listMenuItem = new JmixListMenu.ScreenMenuItem(menuItem.getId())
+                .withTitle(menuConfig.getItemTitle(menuItem))
+                .withDescription(getDescription(menuItem))
+                .withClassNames(Arrays.asList(getClassNames(menuItem)));
+
+        if (!Strings.isNullOrEmpty(menuItem.getIcon())) {
+            listMenuItem.withIcon(VaadinIcon.valueOf(menuItem.getIcon()));
         }
         return listMenuItem;
     }
