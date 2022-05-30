@@ -1,0 +1,40 @@
+<xs:schema targetNamespace="http://jmix.io/schema/flowui/main-screen"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://jmix.io/schema/flowui/main-screen"
+           xmlns:data="http://jmix.io/schema/flowui/data"
+           xmlns:layout="http://jmix.io/schema/flowui/layout"
+           elementFormDefault="qualified">
+
+    <xs:include schemaLocation="http://jmix.io/schema/flowui/data"/>
+    <xs:include schemaLocation="http://jmix.io/schema/flowui/layout"/>
+
+    <xs:element name="mainScreen">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="data" type="data:screenData" minOccurs="0"/>
+
+                <xs:element name="actions" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:choice maxOccurs="unbounded">
+                                <xs:element name="action" type="layout:baseAction"/>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+
+                <xs:element name="appLayout" type="appLayoutType"/>
+            </xs:all>
+
+            <xs:attribute name="messagesGroup" type="xs:string"/>
+            <xs:attribute name="title" type="layout:resourceString"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="appLayoutType">
+        <xs:all>
+            <xs:element name="navigationBar" type="layout:baseLayout"/>
+            <xs:element name="drawerLayout" type="layout:baseLayout"/>
+        </xs:all>
+    </xs:complexType>
+</xs:schema>
