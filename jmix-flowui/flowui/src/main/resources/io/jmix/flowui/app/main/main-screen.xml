@@ -19,10 +19,10 @@
     <appLayout>
         <navigationBar>
             <header id="header" className="jmix-main-screen-header">
-<!--                <drawerToggle id="drawerToggle"-->
-<!--                              className="jmix-main-screen-drawer-toggle"-->
-<!--                              themeName="contrast"-->
-<!--                              ariaLabel="msg://drawerToggle.ariaLabel"/>-->
+                <drawerToggle id="drawerToggle"
+                              className="jmix-main-screen-drawer-toggle"
+                              themeName="contrast"
+                              ariaLabel="msg:///mainScreen.drawerToggle.ariaLabel"/>
                 <h1 id="screenTitle" className="jmix-main-screen-screen-title"/>
             </header>
         </navigationBar>

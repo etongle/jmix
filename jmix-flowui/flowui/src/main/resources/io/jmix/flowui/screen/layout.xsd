@@ -1867,19 +1867,25 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- DrawerToggle -->
-    <xs:complexType name="drawerToggleComponent">
-        <xs:complexContent>
-            <xs:extension base="baseButtonComponent">
-                <xs:attributeGroup ref="hasAriaLabel"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <!-- LogoutButton -->
     <xs:complexType name="logoutButtonComponent">
         <xs:complexContent>
             <xs:extension base="baseButtonComponent"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- DrawerToggle -->
+    <xs:complexType name="drawerToggleComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="themeName" type="buttonThemeName"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasIcon"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasClassName"/>
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
