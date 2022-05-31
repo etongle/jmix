@@ -17,7 +17,7 @@
 package io.jmix.flowui.xml.layout.loader.component;
 
 import com.google.common.base.Strings;
-import io.jmix.flowui.component.menu.JmixListMenu;
+import io.jmix.flowui.component.main.JmixListMenu;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
 

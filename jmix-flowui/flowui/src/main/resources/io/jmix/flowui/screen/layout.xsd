@@ -1835,7 +1835,6 @@
                 <xs:attribute name="disableOnClick" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasSize"/>
-                <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasIcon"/>
                 <xs:attributeGroup ref="hasText"/>
                 <xs:attributeGroup ref="hasEnabled"/>
@@ -1863,6 +1862,8 @@
         <xs:complexContent>
             <xs:extension base="baseButtonComponent">
                 <xs:attribute name="action" type="xs:string"/>
+
+                <xs:attributeGroup ref="hasTitle"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -1870,7 +1871,9 @@
     <!-- LogoutButton -->
     <xs:complexType name="logoutButtonComponent">
         <xs:complexContent>
-            <xs:extension base="baseButtonComponent"/>
+            <xs:extension base="baseButtonComponent">
+                <xs:attributeGroup ref="hasTitle"/>
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 

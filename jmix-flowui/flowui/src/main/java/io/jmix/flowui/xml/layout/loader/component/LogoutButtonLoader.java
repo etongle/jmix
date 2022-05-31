@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2022 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,13 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
-import io.jmix.flowui.kit.component.button.JmixButton;
-import io.jmix.flowui.xml.layout.inittask.AssignActionInitTask;
-import org.dom4j.Element;
+import io.jmix.flowui.component.main.JmixLogoutButton;
 
-public class ButtonLoader extends AbstractButtonLoader<JmixButton> {
+public class LogoutButtonLoader extends AbstractButtonLoader<JmixLogoutButton> {
 
     @Override
-    protected JmixButton createComponent() {
-        return factory.create(JmixButton.class);
+    protected JmixLogoutButton createComponent() {
+        return factory.create(JmixLogoutButton.class);
     }
 
     @Override
@@ -32,14 +30,5 @@ public class ButtonLoader extends AbstractButtonLoader<JmixButton> {
         super.loadComponent();
 
         componentLoader().loadTitle(resultComponent, element, context);
-
-        loadAction(resultComponent, element);
-    }
-
-    protected void loadAction(JmixButton component, Element element) {
-        loadString(element, "action")
-                .ifPresent(actionId -> getComponentContext().addInitTask(
-                        new AssignActionInitTask<>(component, actionId, getComponentContext().getScreen())
-                ));
     }
 }
