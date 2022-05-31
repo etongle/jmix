@@ -16,13 +16,22 @@
 
 package io.jmix.flowui.app.main;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLayout;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.UiController;
+import io.jmix.flowui.screen.UiControllerUtils;
 import io.jmix.flowui.screen.UiDescriptor;
+import io.jmix.flowui.sys.ScreenSupport;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Route("")
 @UiDescriptor("main-screen.xml")
@@ -32,5 +41,27 @@ public class MainScreen extends Screen<AppLayout> implements RouterLayout {
     @Override
     public void showRouterLayoutContent(HasElement content) {
         getContent().showRouterLayoutContent(content);
+
+        updateScreenTitle();
+    }
+
+    protected void updateScreenTitle() {
+        getScreenTitleComponent()
+                .filter(c -> c instanceof HasText)
+                .ifPresent(c -> ((HasText) c).setText(getTitleFromOpenedScreen()));
+    }
+
+    protected Optional<Component> getScreenTitleComponent() {
+        List<Component> components = getContent().getChildren().collect(Collectors.toList());
+        return UiComponentUtils.findComponent(components, "screenTitle");
+    }
+
+    private String getTitleFromOpenedScreen() {
+        if (getContent().getContent() instanceof Screen) {
+            return getApplicationContext().getBean(ScreenSupport.class)
+                    .getLocalizedPageTitle((Screen<?>) getContent().getContent());
+        } else {
+            return UiControllerUtils.getPageTitle(getContent());
+        }
     }
 }

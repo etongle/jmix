@@ -39,7 +39,7 @@ public class MainScreenLoader extends AbstractScreenLoader<MainScreen> {
             throw new GuiDevelopmentException("Required '" + CONTENT_NAME + "' element is not found", context);
         }
 
-        List<Component> navigationBarComponents = loadSubComponents(appLayout, "navigationBar");
+        List<Component> navigationBarComponents = createSubComponents(appLayout, "navigationBar");
         if (!navigationBarComponents.isEmpty()) {
             boolean touchOptimized = getLoaderSupport()
                     .loadBoolean(appLayout.element("navigationBar"), "touchOptimized")
@@ -49,7 +49,7 @@ public class MainScreenLoader extends AbstractScreenLoader<MainScreen> {
                     .addToNavbar(touchOptimized, navigationBarComponents.toArray(new Component[0]));
         }
 
-        List<Component> drawerLayoutComponents = loadSubComponents(appLayout, "drawerLayout");
+        List<Component> drawerLayoutComponents = createSubComponents(appLayout, "drawerLayout");
         if (!drawerLayoutComponents.isEmpty()) {
             resultComponent.getContent().addToDrawer(drawerLayoutComponents.toArray(new Component[0]));
         }
@@ -68,12 +68,10 @@ public class MainScreenLoader extends AbstractScreenLoader<MainScreen> {
                         section -> resultComponent.getContent().setPrimarySection(section),
                         () -> resultComponent.getContent().setPrimarySection(AppLayout.Section.DRAWER));
 
-        // todo rp styleName?
-
         loadSubComponents();
     }
 
-    protected List<Component> loadSubComponents(Element appLayout, String contentName) {
+    protected List<Component> createSubComponents(Element appLayout, String contentName) {
         Element contentElement = appLayout.element(contentName);
         if (contentElement != null) {
             Div bufferComponent = new Div();

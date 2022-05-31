@@ -15,7 +15,7 @@
   -->
 
 <mainScreen xmlns="http://jmix.io/schema/flowui/main-screen"
-            title="msg://mainScreen.title">
+            title="msg:///mainScreen.title">
     <appLayout>
         <navigationBar>
             <header id="header" className="jmix-main-screen-header">
@@ -28,12 +28,12 @@
         </navigationBar>
         <drawerLayout>
             <section id="section" className="jmix-main-screen-section">
-                <h2 id="applicationNameTitle"
-                    text="msg://applicationName"
+                <h2 id="applicationTitle"
+                    text="msg:///mainScreen.applicationTitle.text"
                     className="jmix-main-screen-application-title"/>
                 <nav id="navigation"
                      className="jmix-main-screen-navigation"
-                     ariaLabel="msg://navigation.ariaLabel">
+                     ariaLabel="msg:///mainScreen.navigation.ariaLabel">
                     <listMenu id="menu"/>
                 </nav>
                 <footer id="footer" className="jmix-main-screen-footer">
