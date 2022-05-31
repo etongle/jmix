@@ -1,9 +1,20 @@
 package io.jmix.flowui.sys;
 
+import com.google.common.base.Objects;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.SessionInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
+import io.jmix.flowui.FlowuiProperties;
+import io.jmix.flowui.app.main.MainScreen;
 import io.jmix.flowui.exception.UiExceptionHandlers;
+import io.jmix.flowui.screen.Screen;
+import io.jmix.flowui.screen.ScreenInfo;
+import io.jmix.flowui.screen.ScreenRegistry;
+import io.jmix.flowui.screen.UiController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -12,13 +23,19 @@ import org.springframework.stereotype.Component;
 
 @Component("flowui_JmixServiceInitListener")
 public class JmixServiceInitListener implements VaadinServiceInitListener, ApplicationContextAware {
+    private static final Logger log = LoggerFactory.getLogger(JmixServiceInitListener.class);
 
     protected ApplicationContext applicationContext;
     protected UiExceptionHandlers uiExceptionHandlers;
+    protected ScreenRegistry screenRegistry;
+    protected FlowuiProperties flowuiProperties;
 
-    @Autowired
-    public JmixServiceInitListener(UiExceptionHandlers uiExceptionHandlers) {
+    public JmixServiceInitListener(UiExceptionHandlers uiExceptionHandlers,
+                                   ScreenRegistry screenRegistry,
+                                   FlowuiProperties flowuiProperties) {
         this.uiExceptionHandlers = uiExceptionHandlers;
+        this.screenRegistry = screenRegistry;
+        this.flowuiProperties = flowuiProperties;
     }
 
     @Override
@@ -29,9 +46,47 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     @Override
     public void serviceInit(ServiceInitEvent event) {
         event.getSource().addSessionInitListener(this::onSessionInitEvent);
+
+        // Vaadin scans only application packages by default. To enable scanning
+        // Jmix packages, Vaadin provides @EnableVaadin() annotation, but it
+        // should be defined only in one configuration as Spring cannot register bean with
+        // the same name, see VaadinScanPackagesRegistrar#registerBeanDefinitions().
+        // Register routes after route application scope is available.
+        registerScreenRoutes();
     }
 
     protected void onSessionInitEvent(SessionInitEvent event) {
         event.getSession().setErrorHandler(uiExceptionHandlers);
+    }
+
+    protected void registerScreenRoutes() {
+        boolean shouldRegisterMainScreen = getDefaultMainScreenId().equals(flowuiProperties.getMainScreenId());
+
+        for (ScreenInfo screenInfo : screenRegistry.getScreens()) {
+            RouteConfiguration routeConfiguration = RouteConfiguration.forApplicationScope();
+            Class<? extends Screen<?>> controllerClass = screenInfo.getControllerClass();
+            Route route = controllerClass.getAnnotation(Route.class);
+            if (route == null) {
+                continue;
+            }
+
+            if (controllerClass.equals(MainScreen.class)
+                    && !shouldRegisterMainScreen) {
+                continue;
+            }
+
+            if (routeConfiguration.isPathAvailable(route.value())
+                    || routeConfiguration.isRouteRegistered(controllerClass)) {
+                log.debug("Cannot register route '{}' for class '{}' since it was already registered",
+                        route.value(), controllerClass.getName());
+                continue;
+            }
+
+            routeConfiguration.setRoute(route.value(), controllerClass);
+        }
+    }
+
+    protected String getDefaultMainScreenId() {
+        return UiDescriptorUtils.getInferredScreenId(MainScreen.class);
     }
 }

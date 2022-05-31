@@ -33,38 +33,20 @@ import io.jmix.flowui.xml.layout.loader.container.AbstractContainerLoader;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
 import org.dom4j.Element;
 
-public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements ComponentRootLoader<Screen<?>> {
+public class ScreenLoader extends AbstractScreenLoader<Screen<?>> {
 
+    public static final String SCREEN_ROOT = "screen";
+    public static final String CONTENT_NAME = "layout";
 
-    protected ActionLoaderSupport actionLoaderSupport;
-
-    public ActionLoaderSupport getActionLoaderSupport() {
-        if (actionLoaderSupport == null) {
-            actionLoaderSupport = applicationContext.getBean(ActionLoaderSupport.class, context);
+    @Override
+    public void createContent() {
+        Element content = element.element(CONTENT_NAME);
+        if (content == null) {
+            throw new GuiDevelopmentException("Required '" + CONTENT_NAME + "' element is not found", context);
         }
-        return actionLoaderSupport;
-    }
-
-    public void setResultComponent(Screen<?> screen) {
-        this.resultComponent = screen;
-    }
-
-    @Override
-    protected Screen<?> createComponent() {
-        throw new UnsupportedOperationException("Screen cannot be created from XML element");
-    }
-
-    @Override
-    public void initComponent() {
-        throw new UnsupportedOperationException("Screen cannot be initialized from XML element");
-    }
-
-    @Override
-    public void createContent(Element layoutElement) {
-        Preconditions.checkNotNullArgument(layoutElement);
 
         if (resultComponent.getContent() instanceof HasComponents) {
-            createSubComponents(((HasComponents) resultComponent.getContent()), layoutElement);
+            createSubComponents(((HasComponents) resultComponent.getContent()), content);
         } else {
             // TODO: gg, throw an exception?
         }
@@ -72,7 +54,8 @@ public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements 
 
     @Override
     public void loadComponent() {
-        loadScreenData(resultComponent, element);
+        getScreenLoader().loadScreenData(element);
+        getScreenLoader().loadScreenActions(element);
 
 //        loadDialogOptions(resultComponent, element);
 
@@ -80,7 +63,6 @@ public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements 
 //        loadCaption(resultComponent, element);
 //        loadDescription(resultComponent, element);
 //        loadIcon(resultComponent, element);
-        loadScreenActions(resultComponent, element);
 
         Element layoutElement = element.element("layout");
         if (layoutElement == null) {
@@ -103,37 +85,9 @@ public class ScreenLoader extends AbstractContainerLoader<Screen<?>> implements 
 
         if (screenRootComponent instanceof FlexComponent) {
             loadSubComponentsAndExpand(((FlexComponent) screenRootComponent), layoutElement);
+        } else {
+            loadSubComponents();;
         }
-    }
-
-    protected void loadScreenData(Screen<?> screen, Element element) {
-        Element dataElement = element.element("data");
-        if (dataElement != null) {
-            ScreenDataXmlLoader screenDataXmlLoader = applicationContext.getBean(ScreenDataXmlLoader.class);
-            ScreenData screenData = UiControllerUtils.getScreenData(screen);
-            screenDataXmlLoader.load(screenData, dataElement, null);
-
-            ((ComponentLoaderContext) context).setScreenData(screenData);
-        }
-    }
-
-    protected void loadScreenActions(Screen<?> screen, Element element) {
-        Element actionsEl = element.element("actions");
-        if (actionsEl == null) {
-            return;
-        }
-
-        ScreenActions screenActions = UiControllerUtils.getScreenActions(screen);
-        for (Element actionEl : actionsEl.elements("action")) {
-            screenActions.addAction(loadDeclarativeAction(actionEl));
-        }
-
-        ((ComponentLoaderContext) context).setScreenActions(screenActions);
-    }
-
-    protected Action loadDeclarativeAction(Element element) {
-        return getActionLoaderSupport().loadDeclarativeActionByType(element)
-                .orElse(getActionLoaderSupport().loadDeclarativeAction(element));
     }
 
     /*protected void loadFocusedComponent(Window window, Element element) {

@@ -33,8 +33,25 @@
 
     <xs:complexType name="appLayoutType">
         <xs:all>
-            <xs:element name="navigationBar" type="layout:baseLayout"/>
+            <xs:element name="navigationBar" type="navigationBarType"/>
             <xs:element name="drawerLayout" type="layout:baseLayout"/>
         </xs:all>
+        <xs:attribute name="drawerOpened" type="xs:boolean"/>
+        <xs:attribute name="primarySection" type="primarySection"/>
     </xs:complexType>
+
+    <xs:complexType name="navigationBarType">
+        <xs:complexContent>
+            <xs:extension base="layout:baseLayout">
+                <xs:attribute name="touchOptimized" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:simpleType name="primarySection">
+        <xs:restriction>
+            <xs:enumeration value="DRAWER"/>
+            <xs:enumeration value="NAVBAR"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>
