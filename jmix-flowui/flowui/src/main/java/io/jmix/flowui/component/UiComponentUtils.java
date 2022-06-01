@@ -61,25 +61,25 @@ public final class UiComponentUtils {
         }
     }
 
-    public static Optional<Component> findComponent(Collection<Component> components, String id) {
+    public static Optional<Component> findComponent(Collection<Component> ownComponents, String id) {
         String[] elements = ValuePathHelper.parse(id);
         if (elements.length == 1) {
-            Optional<Component> component = components.stream()
+            Optional<Component> component = ownComponents.stream()
                     .filter(c -> sameId(c, id))
                     .findFirst();
 
             if (component.isPresent()) {
                 return component;
             } else {
-                return Optional.ofNullable(getComponentByIteration(components, id));
+                return Optional.ofNullable(getComponentByIteration(ownComponents, id));
             }
         } else {
-            Optional<Component> innerComponentOpt = components.stream()
+            Optional<Component> innerComponentOpt = ownComponents.stream()
                     .filter(c -> sameId(c, elements[0]))
                     .findFirst();
 
             if (innerComponentOpt.isEmpty()) {
-                return Optional.ofNullable(getComponentByIteration(components, id));
+                return Optional.ofNullable(getComponentByIteration(ownComponents, id));
             } else {
                 Component innerComponent = innerComponentOpt.get();
                 if (innerComponent instanceof HasComponents) {

@@ -80,9 +80,6 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
 
         getContent().add(userComponent);
         getContent().setTitle(generateUserTitle(user));
-
-//        adjustWidth();
-//        adjustHeight();
     }
 
         // todo user substitution

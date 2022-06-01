@@ -86,7 +86,7 @@ public class ScreenLoader extends AbstractScreenLoader<Screen<?>> {
         if (screenRootComponent instanceof FlexComponent) {
             loadSubComponentsAndExpand(((FlexComponent) screenRootComponent), layoutElement);
         } else {
-            loadSubComponents();;
+            loadSubComponents();
         }
     }
 

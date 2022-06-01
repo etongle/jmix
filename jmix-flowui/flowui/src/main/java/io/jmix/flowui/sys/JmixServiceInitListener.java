@@ -52,8 +52,9 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     }
 
     protected void registerScreenRoutes() {
+        RouteConfiguration routeConfiguration = RouteConfiguration.forApplicationScope();
+
         for (ScreenInfo screenInfo : screenRegistry.getScreens()) {
-            RouteConfiguration routeConfiguration = RouteConfiguration.forApplicationScope();
             Class<? extends Screen<?>> controllerClass = screenInfo.getControllerClass();
             Route route = controllerClass.getAnnotation(Route.class);
             if (route == null) {
