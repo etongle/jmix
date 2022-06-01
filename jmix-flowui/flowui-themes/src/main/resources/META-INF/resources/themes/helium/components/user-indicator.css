@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-.jmix-user-indicator .jmix-user-indicator-label {
+.jmix-user-indicator {
+    overflow: hidden;
     text-align: center;
+    text-overflow: ellipsis;
+}
+
+.jmix-user-indicator .jmix-user-indicator-label {
+    white-space: nowrap;
 }
 

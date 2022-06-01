@@ -1,22 +1,17 @@
 package io.jmix.flowui.sys;
 
-import com.google.common.base.Objects;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.SessionInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
-import io.jmix.flowui.FlowuiProperties;
-import io.jmix.flowui.app.main.MainScreen;
 import io.jmix.flowui.exception.UiExceptionHandlers;
 import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.ScreenInfo;
 import io.jmix.flowui.screen.ScreenRegistry;
-import io.jmix.flowui.screen.UiController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -28,14 +23,11 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     protected ApplicationContext applicationContext;
     protected UiExceptionHandlers uiExceptionHandlers;
     protected ScreenRegistry screenRegistry;
-    protected FlowuiProperties flowuiProperties;
 
     public JmixServiceInitListener(UiExceptionHandlers uiExceptionHandlers,
-                                   ScreenRegistry screenRegistry,
-                                   FlowuiProperties flowuiProperties) {
+                                   ScreenRegistry screenRegistry) {
         this.uiExceptionHandlers = uiExceptionHandlers;
         this.screenRegistry = screenRegistry;
-        this.flowuiProperties = flowuiProperties;
     }
 
     @Override
@@ -60,18 +52,11 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     }
 
     protected void registerScreenRoutes() {
-        boolean shouldRegisterMainScreen = getDefaultMainScreenId().equals(flowuiProperties.getMainScreenId());
-
         for (ScreenInfo screenInfo : screenRegistry.getScreens()) {
             RouteConfiguration routeConfiguration = RouteConfiguration.forApplicationScope();
             Class<? extends Screen<?>> controllerClass = screenInfo.getControllerClass();
             Route route = controllerClass.getAnnotation(Route.class);
             if (route == null) {
-                continue;
-            }
-
-            if (controllerClass.equals(MainScreen.class)
-                    && !shouldRegisterMainScreen) {
                 continue;
             }
 
@@ -84,9 +69,5 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
 
             routeConfiguration.setRoute(route.value(), controllerClass);
         }
-    }
-
-    protected String getDefaultMainScreenId() {
-        return UiDescriptorUtils.getInferredScreenId(MainScreen.class);
     }
 }

@@ -20,23 +20,17 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.applayout.AppLayout;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLayout;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.screen.Screen;
-import io.jmix.flowui.screen.UiController;
 import io.jmix.flowui.screen.UiControllerUtils;
-import io.jmix.flowui.screen.UiDescriptor;
 import io.jmix.flowui.sys.ScreenSupport;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Route("")
-@UiDescriptor("main-screen.xml")
-@UiController("main")
-public class MainScreen extends Screen<AppLayout> implements RouterLayout {
+public class StandardMain extends Screen<AppLayout> implements RouterLayout {
 
     @Override
     public void showRouterLayoutContent(HasElement content) {
