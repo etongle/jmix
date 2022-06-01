@@ -48,6 +48,10 @@
     align-items: center;
     margin-bottom: var(--lumo-space-s);
     margin-top: var(--lumo-space-s);
-    padding: var(--lumo-space-xs), var(--lumo-space-m);
+    padding: var(--lumo-space-xs) var(--lumo-space-m);
     gap: var(--lumo-space-m);
+}
+
+.jmix-main-screen-footer .jmix-user-indicator {
+    flex-grow: 1;
 }

@@ -37,7 +37,7 @@
                     <listMenu id="menu"/>
                 </nav>
                 <footer id="footer" className="jmix-main-screen-footer">
-<!--                    <userIndicator id="userIndicator"/>-->
+                    <userIndicator id="userIndicator"/>
                     <logoutButton id="logoutButton"
                                   icon="SIGN_OUT"
                                   title="msg:///mainScreen.logoutButton.title"/>

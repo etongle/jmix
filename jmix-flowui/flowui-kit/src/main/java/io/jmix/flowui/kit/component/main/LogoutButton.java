@@ -24,9 +24,12 @@ import io.jmix.flowui.kit.component.HasTitle;
 
 public class LogoutButton extends Button implements HasTitle {
 
+    protected static final String MAIN_STYLE_NAME = "jmix-logout-button";
+
     protected boolean hasListeners = false;
 
     public LogoutButton() {
+        addClassName(MAIN_STYLE_NAME);
         attachClickListener();
     }
 
