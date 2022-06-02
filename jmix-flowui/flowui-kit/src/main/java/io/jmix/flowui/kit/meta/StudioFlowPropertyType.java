@@ -62,6 +62,11 @@ public enum StudioFlowPropertyType {
     INTEGER,
 
     /**
+     * String value or message key with msg:// prefix.
+     */
+    LOCALIZED_STRING,
+
+    /**
      * Long type.
      */
     LONG,

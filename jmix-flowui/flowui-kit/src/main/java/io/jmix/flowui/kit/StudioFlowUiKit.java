@@ -65,11 +65,11 @@ public interface StudioFlowUiKit {
                     @StudioFlowProperty(xmlAttribute = "maxWidth", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "minHeight", type = StudioFlowPropertyType.SIZE),
                     @StudioFlowProperty(xmlAttribute = "minWidth", type = StudioFlowPropertyType.SIZE),
-                    @StudioFlowProperty(xmlAttribute = "text", type = StudioFlowPropertyType.STRING),
+                    @StudioFlowProperty(xmlAttribute = "text", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "themeName", type = StudioFlowPropertyType.VALUES_LIST,
                             options = {"small", "large", "tertiary", "tertiary-inline", "primary", "success", "error",
                                     "contrast", "icon", "contained", "outlined"}),
-                    @StudioFlowProperty(xmlAttribute = "title", type = StudioFlowPropertyType.STRING),
+                    @StudioFlowProperty(xmlAttribute = "title", type = StudioFlowPropertyType.LOCALIZED_STRING),
                     @StudioFlowProperty(xmlAttribute = "visible", type = StudioFlowPropertyType.BOOLEAN,
                             setMethod = "setVisible", defaultValue = "true"),
                     @StudioFlowProperty(xmlAttribute = "whiteSpace", type = StudioFlowPropertyType.ENUMERATION,
@@ -660,7 +660,7 @@ public interface StudioFlowUiKit {
             name = "Image",
             category = "Components",
             xmlElement = "image",
-//            icon = "",
+            icon = "io/jmix/flowui/kit/meta/component/image.svg",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "alternativeText", type = StudioFlowPropertyType.STRING),
                     @StudioFlowProperty(xmlAttribute = "ariaLabel", type = StudioFlowPropertyType.STRING),
@@ -1258,7 +1258,7 @@ public interface StudioFlowUiKit {
             name = "DatePicker",
             category = "Components",
             xmlElement = "datePicker",
-//            icon = "",
+            icon = "io/jmix/flowui/kit/meta/component/datePicker.svg",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "autoOpen", type = StudioFlowPropertyType.BOOLEAN,
                             defaultValue = "false"),
@@ -1449,7 +1449,7 @@ public interface StudioFlowUiKit {
             name = "EntityComboBox",
             category = "Components",
             xmlElement = "entityComboBox",
-//            icon = "",
+            icon = "io/jmix/flowui/kit/meta/component/entityComboBox.svg",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "allowCustomValue", type = StudioFlowPropertyType.BOOLEAN,
                             defaultValue = "false"),
@@ -1505,7 +1505,7 @@ public interface StudioFlowUiKit {
             name = "EntityPicker",
             category = "Components",
             xmlElement = "EntityPicker",
-//            icon = "",
+            icon = "io/jmix/flowui/kit/meta/component/entityPicker.svg",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "allowCustomValue", type = StudioFlowPropertyType.BOOLEAN,
                             defaultValue = "false"),
@@ -1549,7 +1549,7 @@ public interface StudioFlowUiKit {
             name = "Grid",
             category = "Components",
             xmlElement = "grid",
-            icon = "io/jmix/flowui/kit/meta/component/table.svg",
+            icon = "io/jmix/flowui/kit/meta/component/grid.svg",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "allRowsVisible", type = StudioFlowPropertyType.BOOLEAN,
                             defaultValue = "false"),
@@ -1765,7 +1765,7 @@ public interface StudioFlowUiKit {
             name = "ProgressBar",
             category = "Components",
             xmlElement = "progressBar",
-//            icon = "",
+            icon = "io/jmix/flowui/kit/meta/component/progressBar.svg",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
                     @StudioFlowProperty(xmlAttribute = "height", type = StudioFlowPropertyType.SIZE),
@@ -1792,7 +1792,7 @@ public interface StudioFlowUiKit {
             name = "RadioButtonGroup",
             category = "Components",
             xmlElement = "radioButtonGroup",
-//            icon = "",
+            icon = "io/jmix/flowui/kit/meta/component/radioButtonGroup.svg",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "className", type = StudioFlowPropertyType.VALUES_LIST),
                     @StudioFlowProperty(xmlAttribute = "dataContainer", type = StudioFlowPropertyType.STRING),
@@ -1881,7 +1881,7 @@ public interface StudioFlowUiKit {
             name = "TextArea",
             category = "Components",
             xmlElement = "textArea",
-//            icon = "",
+            icon = "io/jmix/flowui/kit/meta/component/textArea.svg",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "autocapitalize", type = StudioFlowPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.textfield.Autocapitalize", defaultValue = "NONE",
@@ -1947,10 +1947,10 @@ public interface StudioFlowUiKit {
     TextArea textArea();
 
     @StudioFlowComponent(
-            name = "textField",
+            name = "TextField",
             category = "Components",
             xmlElement = "textField",
-//            icon = "",
+            icon = "io/jmix/flowui/kit/meta/component/textField.svg",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "autocapitalize", type = StudioFlowPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.textfield.Autocapitalize", defaultValue = "NONE",
@@ -2019,7 +2019,7 @@ public interface StudioFlowUiKit {
     TextField textField();
 
     @StudioFlowComponent(
-            name = "timePicker",
+            name = "TimePicker",
             category = "Components",
             xmlElement = "timePicker",
 //            icon = "",
@@ -2064,7 +2064,7 @@ public interface StudioFlowUiKit {
             name = "ValuePicker",
             category = "Components",
             xmlElement = "valuePicker",
-//            icon = ""
+            icon = "io/jmix/flowui/kit/meta/component/valuePicker.svg",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "allowCustomValue", type = StudioFlowPropertyType.BOOLEAN,
                             defaultValue = "false"),
@@ -2107,7 +2107,7 @@ public interface StudioFlowUiKit {
             name = "ValuesPicker",
             category = "Components",
             xmlElement = "valuesPicker",
-//            icon = ""
+            icon = "io/jmix/flowui/kit/meta/component/valuesPicker.svg",
             properties = {
                     @StudioFlowProperty(xmlAttribute = "allowCustomValue", type = StudioFlowPropertyType.BOOLEAN,
                             defaultValue = "false"),
