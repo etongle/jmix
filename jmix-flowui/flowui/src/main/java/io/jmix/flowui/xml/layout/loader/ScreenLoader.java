@@ -82,8 +82,7 @@ public class ScreenLoader extends AbstractScreenLoader<Screen<?>> implements Com
 //        loadCaption(resultComponent, element);
 //        loadDescription(resultComponent, element);
 //        loadIcon(resultComponent, element);
-        loadScreenActions(resultComponent, element);
-        loadFacets(resultComponent, element);
+        getScreenLoader().loadFacets(element);
 
         Component screenRootComponent = resultComponent.getContent();
 
@@ -121,21 +120,6 @@ public class ScreenLoader extends AbstractScreenLoader<Screen<?>> implements Com
             window.setFocusComponent(componentId);
         }
     }*/
-
-    protected void loadFacets(Screen<?> screen, Element element) {
-        Element facetsElement = element.element("facets");
-        if (facetsElement != null) {
-            List<Element> facetElements = facetsElement.elements();
-
-            ScreenFacets screenFacets = UiControllerUtils.getScreenFacets(screen);
-            FacetLoader loader = applicationContext.getBean(FacetLoader.class);
-            for (Element facetElement : facetElements) {
-                Facet facet = loader.load(facetElement, getComponentContext());
-
-                screenFacets.addFacet(facet);
-            }
-        }
-    }
 
     /*@Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {

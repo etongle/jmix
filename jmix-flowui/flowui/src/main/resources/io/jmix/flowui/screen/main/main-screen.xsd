@@ -40,6 +40,8 @@
                     </xs:complexType>
                 </xs:element>
 
+                <xs:element name="facets" minOccurs="0" type="layout:facets"/>
+
                 <xs:element name="appLayout" type="appLayoutType"/>
             </xs:all>
 

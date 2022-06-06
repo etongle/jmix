@@ -17,12 +17,15 @@
 package io.jmix.flowui.xml.layout.support;
 
 import io.jmix.core.annotation.Internal;
+import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.ScreenData;
 import io.jmix.flowui.model.impl.ScreenDataXmlLoader;
 import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.ScreenActions;
+import io.jmix.flowui.screen.ScreenFacets;
 import io.jmix.flowui.screen.UiControllerUtils;
+import io.jmix.flowui.xml.facet.FacetLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.ComponentLoaderContext;
 import org.dom4j.Element;
@@ -33,6 +36,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+import static com.google.common.base.Preconditions.checkState;
 
 @Internal
 @Component("flowui_ScreenLoaderSupport")
@@ -92,8 +99,30 @@ public class ScreenLoaderSupport implements ApplicationContextAware {
         ((ComponentLoaderContext) context).setScreenActions(screenActions);
     }
 
+    public void loadFacets(Element element) {
+        Element facetsElement = element.element("facets");
+        if (facetsElement != null) {
+            List<Element> facetElements = facetsElement.elements();
+
+            ScreenFacets screenFacets = UiControllerUtils.getScreenFacets(screen);
+            FacetLoader loader = applicationContext.getBean(FacetLoader.class);
+            for (Element facetElement : facetElements) {
+                Facet facet = loader.load(facetElement, getComponentContext());
+
+                screenFacets.addFacet(facet);
+            }
+        }
+    }
+
     protected Action loadDeclarativeAction(Element element) {
         return getActionLoaderSupport().loadDeclarativeActionByType(element)
                 .orElse(getActionLoaderSupport().loadDeclarativeAction(element));
+    }
+
+    protected ComponentLoader.ComponentContext getComponentContext() {
+        checkState(context instanceof ComponentLoader.ComponentContext,
+                "'context' must implement " + ComponentLoader.ComponentContext.class.getName());
+
+        return (ComponentLoader.ComponentContext) context;
     }
 }

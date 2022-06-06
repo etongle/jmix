@@ -59,6 +59,7 @@ public class MainScreenLoader extends AbstractScreenLoader<StandardMain> {
     public void loadComponent() {
         getScreenLoader().loadScreenData(element);
         getScreenLoader().loadScreenActions(element);
+        getScreenLoader().loadFacets(element);
 
         getLoaderSupport().loadBoolean(element, "drawerOpened",
                 drawerOpened -> resultComponent.getContent().setDrawerOpened(drawerOpened));
