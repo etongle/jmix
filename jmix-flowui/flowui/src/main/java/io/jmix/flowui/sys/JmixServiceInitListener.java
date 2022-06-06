@@ -72,7 +72,7 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
 
             if (routeConfiguration.isPathAvailable(route.value())
                     || routeConfiguration.isRouteRegistered(controllerClass)) {
-                log.debug("Cannot register route '{}' for class '{}' since it was already registered",
+                log.debug("Skipping route '{}' for class '{}' since it was already registered",
                         route.value(), controllerClass.getName());
                 continue;
             }

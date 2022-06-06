@@ -58,22 +58,6 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
 
         UserDetails user = currentUserSubstitution.getAuthenticatedUser();
 
-        // todo user substitution
-        /*List<UserDetails> currentAndSubstitutedUsers = new LinkedList<>();
-        currentAndSubstitutedUsers.add(user);
-
-
-        List<UserDetails> additionalUsers = substitutionManager != null
-                ? substitutionManager.getCurrentSubstitutedUsers() : Collections.emptyList();
-
-        currentAndSubstitutedUsers.addAll(additionalUsers);
-
-        if (additionalUsers.size() > 0) {
-            userComponent = createUserSelectionField(currentAndSubstitutedUsers);
-        } else {
-            userComponent = createUserIndicator(currentUserSubstitution.getAuthenticatedUser());
-        }*/
-
         userComponent = createUserIndicator();
 
         updateUserIndicatorLabel(currentUserSubstitution.getAuthenticatedUser());
@@ -81,56 +65,6 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         getContent().add(userComponent);
         getContent().setTitle(generateUserTitle(user));
     }
-
-        // todo user substitution
-/*    protected HasValue<UserDetails> createUserSelectionField(List<UserDetails> currentAndSubstitutedUsers) {
-        ComboBox<UserDetails> userCombobox = uiComponents.create(ComboBox.of(UserDetails.class));
-        userCombobox.setOptionsList(currentAndSubstitutedUsers);
-        userCombobox.setStyleName("jmix-user-select-combobox");
-        userCombobox.setOptionCaptionProvider(this::generateUserCaption);
-        userCombobox.setNullOptionVisible(false);
-        userCombobox.setValue(currentUserSubstitution.getEffectiveUser());
-
-        userCombobox.addValueChangeListener(this::substituteUser);
-
-        return userCombobox;
-    }*/
-
-    /*protected void substituteUser(HasValue.ValueChangeEvent<UserDetails> valueChangedEvent) {
-        UserDetails newUser = valueChangedEvent.getValue();
-        UserDetails prevUser = valueChangedEvent.getPrevValue();
-
-        if (newUser == null || prevUser == null) {//should not happen
-            return;
-        }
-
-        if (currentUserSubstitution.getEffectiveUser().equals(newUser)) {
-            return;
-        }
-
-        SubstituteUserAction substituteUserAction = new SubstituteUserAction(newUser,
-                prevUser,
-                messages,
-                icons,
-                substitutionManager)
-                .withCancelAction(this::revertSelection);
-        substituteUserAction.setPrimary(true);
-
-        dialogs.createOptionDialog()
-                .withCaption(messages.getMessage("substitutionConfirmation.caption"))
-                .withMessage(messages.formatMessage("", "substitutionConfirmation.message",
-                        generateUserCaption(newUser)))
-                .withActions(
-                        substituteUserAction,
-                        new DialogAction(DialogAction.Type.CANCEL)
-                                .withHandler(event -> revertSelection(prevUser))
-                )
-                .show();
-    }*/
-
-    /*protected void revertSelection(UserDetails oldUser) {
-        userComponent.setValue(oldUser);
-    }*/
 
     protected String generateUserTitle(UserDetails user) {
         String userTitle = super.generateUserTitle(user);

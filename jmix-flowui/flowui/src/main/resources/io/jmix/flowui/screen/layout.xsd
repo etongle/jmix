@@ -1826,23 +1826,6 @@
         <xs:attribute name="value" type="xs:string"/>
     </xs:complexType>
 
-    <xs:complexType name="baseButtonComponent">
-        <xs:complexContent>
-            <xs:extension base="baseComponent">
-                <xs:attribute name="autofocus" type="xs:boolean"/>
-                <xs:attribute name="iconAfterText" type="xs:boolean"/>
-                <xs:attribute name="themeName" type="buttonThemeName"/>
-                <xs:attribute name="disableOnClick" type="xs:boolean"/>
-
-                <xs:attributeGroup ref="hasSize"/>
-                <xs:attributeGroup ref="hasIcon"/>
-                <xs:attributeGroup ref="hasText"/>
-                <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasClassName"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <!-- Components -->
 
     <!-- ListMenu -->
@@ -1860,19 +1843,19 @@
     <!-- Button-->
     <xs:complexType name="buttonComponent">
         <xs:complexContent>
-            <xs:extension base="baseButtonComponent">
+            <xs:extension base="baseComponent">
                 <xs:attribute name="action" type="xs:string"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+                <xs:attribute name="iconAfterText" type="xs:boolean"/>
+                <xs:attribute name="themeName" type="buttonThemeName"/>
+                <xs:attribute name="disableOnClick" type="xs:boolean"/>
 
+                <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasTitle"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <!-- LogoutButton -->
-    <xs:complexType name="logoutButtonComponent">
-        <xs:complexContent>
-            <xs:extension base="baseButtonComponent">
-                <xs:attributeGroup ref="hasTitle"/>
+                <xs:attributeGroup ref="hasIcon"/>
+                <xs:attributeGroup ref="hasText"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasClassName"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2570,7 +2553,6 @@
                 <!--                <xs:element name="fragment" type="fragmentContainer"/>-->
 
                 <!-- Component -->
-                <xs:element name="logoutButton" type="logoutButtonComponent"/>
                 <xs:element name="drawerToggle" type="drawerToggleComponent"/>
                 <xs:element name="userIndicator" type="userIndicatorComponent"/>
                 <xs:element name="listMenu" type="listMenuComponent"/>

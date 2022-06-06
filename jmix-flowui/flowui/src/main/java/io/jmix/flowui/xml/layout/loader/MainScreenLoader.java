@@ -19,7 +19,7 @@ package io.jmix.flowui.xml.layout.loader;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.html.Div;
-import io.jmix.flowui.app.main.StandardMain;
+import io.jmix.flowui.app.main.StandardMainScreen;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import org.dom4j.Element;
 
@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MainScreenLoader extends AbstractScreenLoader<StandardMain> {
+public class MainScreenLoader extends AbstractScreenLoader<StandardMainScreen> {
 
     public static final String MAIN_SCREEN_ROOT = "mainScreen";
     public static final String CONTENT_NAME = "appLayout";

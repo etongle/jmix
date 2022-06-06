@@ -26,11 +26,9 @@ import io.jmix.flowui.screen.Screen;
 import io.jmix.flowui.screen.UiControllerUtils;
 import io.jmix.flowui.sys.ScreenSupport;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-public class StandardMain extends Screen<AppLayout> implements RouterLayout {
+public class StandardMainScreen extends Screen<AppLayout> implements RouterLayout {
 
     @Override
     public void showRouterLayoutContent(HasElement content) {
@@ -46,8 +44,7 @@ public class StandardMain extends Screen<AppLayout> implements RouterLayout {
     }
 
     protected Optional<Component> getScreenTitleComponent() {
-        List<Component> components = getContent().getChildren().collect(Collectors.toList());
-        return UiComponentUtils.findComponent(components, "screenTitle");
+        return UiComponentUtils.findComponent(getContent(), "screenTitle");
     }
 
     private String getTitleFromOpenedScreen() {
