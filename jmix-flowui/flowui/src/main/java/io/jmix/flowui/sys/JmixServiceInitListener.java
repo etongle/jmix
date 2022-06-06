@@ -1,9 +1,11 @@
 package io.jmix.flowui.sys;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.SessionInitEvent;
+import com.vaadin.flow.server.UIInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
 import io.jmix.flowui.exception.UiExceptionHandlers;
 import io.jmix.flowui.screen.Screen;
@@ -38,6 +40,7 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     @Override
     public void serviceInit(ServiceInitEvent event) {
         event.getSource().addSessionInitListener(this::onSessionInitEvent);
+        event.getSource().addUIInitListener(this::onUIInitEvent);
 
         // Vaadin scans only application packages by default. To enable scanning
         // Jmix packages, Vaadin provides @EnableVaadin() annotation, but it
@@ -45,6 +48,12 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
         // the same name, see VaadinScanPackagesRegistrar#registerBeanDefinitions().
         // Register routes after route application scope is available.
         registerScreenRoutes();
+    }
+
+    protected void onUIInitEvent(UIInitEvent uiInitEvent) {
+        UI ui = uiInitEvent.getUI();
+        // retrieve ExtendedClientDetails to be cached
+        ui.getPage().retrieveExtendedClientDetails(extendedClientDetails -> {});
     }
 
     protected void onSessionInitEvent(SessionInitEvent event) {
