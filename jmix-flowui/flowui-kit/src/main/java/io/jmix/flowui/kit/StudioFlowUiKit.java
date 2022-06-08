@@ -45,6 +45,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Button",
+            classFqn = "io.jmix.flowui.kit.component.button.JmixButton",
             category = "Components",
             xmlElement = "button",
             icon = "io/jmix/flowui/kit/meta/component/button.svg",
@@ -84,6 +85,7 @@ public interface StudioFlowUiKit {
     //HTML
     @StudioFlowComponent(
             name = "Anchor",
+            classFqn = "com.vaadin.flow.component.html.Anchor",
             category = "Components",
             xmlElement = "anchor",
 //            icon = "",
@@ -118,6 +120,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Article",
+            classFqn = "com.vaadin.flow.component.html.Article",
             category = "Components",
             xmlElement = "article",
 //            icon = "",
@@ -149,6 +152,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Aside",
+            classFqn = "com.vaadin.flow.component.html.Aside",
             category = "Components",
             xmlElement = "aside",
 //            icon = "",
@@ -179,6 +183,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "DescriptionList",
+            classFqn = "com.vaadin.flow.component.html.DescriptionList",
             category = "Components",
             xmlElement = "descriptionList",
 //            icon = "",
@@ -209,6 +214,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Term",
+            classFqn = "com.vaadin.flow.component.html.DescriptionList.Term",
             category = "Components",
             xmlElement = "term",
 //            icon = "",
@@ -239,6 +245,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Description",
+            classFqn = "com.vaadin.flow.component.html.DescriptionList.Description",
             category = "Components",
             xmlElement = "description",
 //            icon = "",
@@ -269,6 +276,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Div",
+            classFqn = "com.vaadin.flow.component.html.Div",
             category = "Components",
             xmlElement = "div",
 //            icon = "",
@@ -299,6 +307,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Emphasis",
+            classFqn = "com.vaadin.flow.component.html.Emphasis",
             category = "Components",
             xmlElement = "emphasis",
 //            icon = "",
@@ -329,6 +338,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Footer",
+            classFqn = "com.vaadin.flow.component.html.Footer",
             category = "Components",
             xmlElement = "footer",
 //            icon = "",
@@ -359,6 +369,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "H1",
+            classFqn = "com.vaadin.flow.component.html.H1",
             category = "Components",
             xmlElement = "h1",
 //            icon = "",
@@ -389,6 +400,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "H2",
+            classFqn = "com.vaadin.flow.component.html.H2",
             category = "Components",
             xmlElement = "h2",
 //            icon = "",
@@ -419,6 +431,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "H3",
+            classFqn = "com.vaadin.flow.component.html.H3",
             category = "Components",
             xmlElement = "h3",
 //            icon = "",
@@ -449,6 +462,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "H4",
+            classFqn = "com.vaadin.flow.component.html.H4",
             category = "Components",
             xmlElement = "h4",
 //            icon = "",
@@ -479,6 +493,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "H5",
+            classFqn = "com.vaadin.flow.component.html.H5",
             category = "Components",
             xmlElement = "h5",
 //            icon = "",
@@ -509,6 +524,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "H6",
+            classFqn = "com.vaadin.flow.component.html.H6",
             category = "Components",
             xmlElement = "h6",
 //            icon = "",
@@ -539,6 +555,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Header",
+            classFqn = "com.vaadin.flow.component.html.Header",
             category = "Components",
             xmlElement = "header",
 //            icon = "",
@@ -569,6 +586,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Hr",
+            classFqn = "com.vaadin.flow.component.html.Hr",
             category = "Components",
             xmlElement = "hr",
 //            icon = "",
@@ -590,6 +608,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "HtmlObject",
+            classFqn = "com.vaadin.flow.component.html.HtmlObject",
             category = "Components",
             xmlElement = "htmlObject",
 //            icon = "",
@@ -622,6 +641,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "IFrame",
+            classFqn = "com.vaadin.flow.component.html.IFrame",
             category = "Components",
             xmlElement = "iframe",
 //            icon = "",
@@ -658,6 +678,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Image",
+            classFqn = "com.vaadin.flow.component.html.Image",
             category = "Components",
             xmlElement = "image",
             icon = "io/jmix/flowui/kit/meta/component/image.svg",
@@ -691,6 +712,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Input",
+            classFqn = "com.vaadin.flow.component.html.Input",
             category = "Components",
             xmlElement = "input",
 //            icon = "",
@@ -724,6 +746,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "ListItem",
+            classFqn = "com.vaadin.flow.component.html.ListItem",
             category = "Components",
             xmlElement = "listItem",
 //            icon = "",
@@ -754,6 +777,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Main",
+            classFqn = "com.vaadin.flow.component.html.Main",
             category = "Components",
             xmlElement = "main",
 //            icon = "",
@@ -785,6 +809,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Nav",
+            classFqn = "com.vaadin.flow.component.html.Nav",
             category = "Components",
             xmlElement = "nav",
 //            icon = "",
@@ -816,6 +841,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "OrderedList",
+            classFqn = "com.vaadin.flow.component.html.OrderedList",
             category = "Components",
             xmlElement = "orderedList",
 //            icon = "",
@@ -850,6 +876,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Paragraph",
+            classFqn = "com.vaadin.flow.component.html.Paragraph",
             category = "Components",
             xmlElement = "p",
 //            icon = "",
@@ -880,6 +907,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Param",
+            classFqn = "com.vaadin.flow.component.html.Param",
             category = "Components",
             xmlElement = "param",
 //            icon = "",
@@ -903,6 +931,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Pre",
+            classFqn = "com.vaadin.flow.component.html.Pre",
             category = "Components",
             xmlElement = "pre",
 //            icon = "",
@@ -933,6 +962,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Section",
+            classFqn = "com.vaadin.flow.component.html.Section",
             category = "Components",
             xmlElement = "section",
 //            icon = "",
@@ -963,6 +993,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Span",
+            classFqn = "com.vaadin.flow.component.html.Span",
             category = "Components",
             xmlElement = "span",
 //            icon = "",
@@ -993,6 +1024,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "UnorderedList",
+            classFqn = "com.vaadin.flow.component.html.UnorderedList",
             category = "Components",
             xmlElement = "unorderedList",
 //            icon = "",
@@ -1024,6 +1056,7 @@ public interface StudioFlowUiKit {
     //Components
     @StudioFlowComponent(
             name = "Avatar",
+            classFqn = "com.vaadin.flow.component.avatar.Avatar",
             category = "Components",
             xmlElement = "avatar",
 //            icon = "",
@@ -1050,6 +1083,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "BigDecimalField",
+            classFqn = "io.jmix.flowui.component.textfield.JmixBigDecimalField",
             category = "Components",
             xmlElement = "bigDecimalField",
 //            icon = "",
@@ -1120,6 +1154,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "CheckBox",
+            classFqn = "com.vaadin.flow.component.checkbox.Checkbox",
             category = "Components",
             xmlElement = "checkBox",
             icon = "io/jmix/flowui/kit/meta/component/checkBox.svg",
@@ -1155,6 +1190,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "ComboBox",
+            classFqn = "io.jmix.flowui.component.combobox.JmixComboBox",
             category = "Components",
             xmlElement = "comboBox",
             icon = "io/jmix/flowui/kit/meta/component/comboBox.svg",
@@ -1207,6 +1243,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "ComboBoxPicker",
+            classFqn = "io.jmix.flowui.kit.component.combobox.ComboBoxPicker",
             category = "Components",
             xmlElement = "comboBoxPicker",
 //            icon = "",
@@ -1256,6 +1293,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "DatePicker",
+            classFqn = "io.jmix.flowui.component.datepicker.TypedDatePicker",
             category = "Components",
             xmlElement = "datePicker",
             icon = "io/jmix/flowui/kit/meta/component/datePicker.svg",
@@ -1305,6 +1343,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "DateTimePicker",
+            classFqn = "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
             category = "Components",
             xmlElement = "dateTimePicker",
 //            icon = "",
@@ -1351,6 +1390,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Details",
+            classFqn = "com.vaadin.flow.component.details.Details",
             category = "Components",
             xmlElement = "details",
 //            icon = "",
@@ -1376,6 +1416,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "EmailField",
+            classFqn = "com.vaadin.flow.component.textfield.EmailField",
             category = "Components",
             xmlElement = "emailField",
 //            icon = "",
@@ -1447,6 +1488,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "EntityComboBox",
+            classFqn = "io.jmix.flowui.component.combobox.EntityComboBox",
             category = "Components",
             xmlElement = "entityComboBox",
             icon = "io/jmix/flowui/kit/meta/component/entityComboBox.svg",
@@ -1503,6 +1545,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "EntityPicker",
+            classFqn = "io.jmix.flowui.component.valuepicker.EntityPicker",
             category = "Components",
             xmlElement = "EntityPicker",
             icon = "io/jmix/flowui/kit/meta/component/entityPicker.svg",
@@ -1547,6 +1590,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Grid",
+            classFqn = "io.jmix.flowui.component.grid.JmixGrid",
             category = "Components",
             xmlElement = "grid",
             icon = "io/jmix/flowui/kit/meta/component/grid.svg",
@@ -1596,6 +1640,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "ListMenu",
+            classFqn = "io.jmix.flowui.component.menu.JmixListMenu",
             category = "Components",
             xmlElement = "listMenu",
 //            icon = "",
@@ -1619,6 +1664,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "NumberField",
+            classFqn = "com.vaadin.flow.component.textfield.NumberField",
             category = "Components",
             xmlElement = "numberField",
 //            icon = "",
@@ -1691,6 +1737,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "PasswordField",
+            classFqn = "com.vaadin.flow.component.textfield.PasswordField",
             category = "Components",
             xmlElement = "passwordField",
             icon = "io/jmix/flowui/kit/meta/component/passwordField.svg",
@@ -1763,6 +1810,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "ProgressBar",
+            classFqn = "com.vaadin.flow.component.progressbar.ProgressBar",
             category = "Components",
             xmlElement = "progressBar",
             icon = "io/jmix/flowui/kit/meta/component/progressBar.svg",
@@ -1790,6 +1838,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "RadioButtonGroup",
+            classFqn = "com.vaadin.flow.component.radiobutton.RadioButtonGroup",
             category = "Components",
             xmlElement = "radioButtonGroup",
             icon = "io/jmix/flowui/kit/meta/component/radioButtonGroup.svg",
@@ -1827,6 +1876,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "Select",
+            classFqn = "com.vaadin.flow.component.select.Select",
             category = "Components",
             xmlElement = "Select",
 //            icon = "",
@@ -1879,6 +1929,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "TextArea",
+            classFqn = "com.vaadin.flow.component.textfield.TextArea",
             category = "Components",
             xmlElement = "textArea",
             icon = "io/jmix/flowui/kit/meta/component/textArea.svg",
@@ -1948,6 +1999,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "TextField",
+            classFqn = "io.jmix.flowui.component.textfield.TypedTextField",
             category = "Components",
             xmlElement = "textField",
             icon = "io/jmix/flowui/kit/meta/component/textField.svg",
@@ -2020,6 +2072,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "TimePicker",
+            classFqn = "io.jmix.flowui.component.timepicker.TypedTimePicker",
             category = "Components",
             xmlElement = "timePicker",
 //            icon = "",
@@ -2062,6 +2115,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "ValuePicker",
+            classFqn = "io.jmix.flowui.component.valuepicker.JmixValuePicker",
             category = "Components",
             xmlElement = "valuePicker",
             icon = "io/jmix/flowui/kit/meta/component/valuePicker.svg",
@@ -2105,6 +2159,7 @@ public interface StudioFlowUiKit {
 
     @StudioFlowComponent(
             name = "ValuesPicker",
+            classFqn = "io.jmix.flowui.component.valuepicker.JmixValuesPicker",
             category = "Components",
             xmlElement = "valuesPicker",
             icon = "io/jmix/flowui/kit/meta/component/valuesPicker.svg",
