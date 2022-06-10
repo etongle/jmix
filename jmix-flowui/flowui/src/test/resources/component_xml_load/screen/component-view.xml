@@ -28,7 +28,11 @@
         </instance>
     </data>
     <actions>
-        <action id="buttonAction"/>
+        <action id="buttonAction"
+                text="Action Text"
+                description="Action Description"
+                icon="USER"
+                actionVariant="PRIMARY"/>
     </actions>
     <layout>
         <avatar id="avatarId"
@@ -79,9 +83,7 @@
                 width="100px"/>
         <bigDecimalField id="bigDecimalFieldWithValueId" dataContainer="orderDc" property="amount"/>
 
-        disableOnClick="true"
         <button id="buttonId"
-                action="buttonAction"
                 autofocus="true"
                 className="cssClassName1, cssClassName2"
                 disableOnClick="true"
@@ -100,7 +102,10 @@
                 whiteSpace="PRE"
                 width="100px"/>
 
-        <checkBox id="checkBoxId"
+        <button id="buttonWithActionId"
+                action="buttonAction"/>
+
+        <checkbox id="checkBoxId"
                   ariaLabel="ariaLabelString"
                   autofocus="true"
                   className="cssClassName1, cssClassName2"
@@ -117,7 +122,7 @@
                   value="true"
                   visible="true"
                   width="100px"/>
-        <checkBox id="checkBoxWithDataId" dataContainer="orderDc" property="user.active"/>
+        <checkbox id="checkBoxWithDataId" dataContainer="orderDc" property="user.active"/>
 
         <comboBox id="comboBoxId"
                   allowCustomValue="true"
